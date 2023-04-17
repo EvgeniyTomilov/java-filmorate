@@ -9,6 +9,6 @@ public class User {
     private Long id;
     private String email;
     private String login;
-    private final String name;
-    private final LocalDate birthday;
+    private String name;
+    private LocalDate birthday;
 }
