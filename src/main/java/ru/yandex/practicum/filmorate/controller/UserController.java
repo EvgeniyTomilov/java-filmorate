@@ -41,6 +41,4 @@ public class UserController {
         log.info("Текущее количество users: {}", repository.getUsers().size());
         return repository.getUsers();
     }
-
-
 }
