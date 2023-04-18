@@ -5,11 +5,9 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
-
-import java.time.Duration;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValidateServiceTest {
 
@@ -65,7 +63,10 @@ class ValidateServiceTest {
         ValidateService validateService = new ValidateService();
         Film film = new Film();
         film.setName("name film");
-        film.setDescription("lkishjfgdkajsdhvashdkvbaslkhvbvdxfgbxcvbxvbxcvbxcvb lkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbv dlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvvbfdgefbgsdfbsdfbsdfbsdgfbsbfdbgdsfbvgf nknxzbv kdfsvzcdldkbjsdkjbgpksdgfpbjsodpkgbjnvkv");
+        film.setDescription("lkishjfgdkajsdhvashdkvbaslkhvbvdxfgbxcvbxvbxcvbxcvb lkasdhjbvlkalsblsllhsjbksdhvknbsvnb" +
+                "ksbv dlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsbl" +
+                "sllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbks" +
+                "bvvbfdgefbgsdfbsdfbsdfbsdgfbsbfdbgdsfbvgf nknxzbv kdfsvzcdldkbjsdkjbgpksdgfpbjsodpkgbjnvkv");
         assertThrows(RuntimeException.class, () -> validateService.validateFilm(film));
     }
 
@@ -89,6 +90,4 @@ class ValidateServiceTest {
         film.setDuration(-2L);
         assertThrows(RuntimeException.class, () -> validateService.validateFilm(film));
     }
-
-
 }
