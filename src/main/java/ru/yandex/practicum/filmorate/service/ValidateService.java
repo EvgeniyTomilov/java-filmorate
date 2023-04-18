@@ -1,16 +1,15 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
-@Component
+
 @Slf4j
 public class ValidateService {
-    public void validateUser(User user) {
+    public static void validateUser(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.warn("email пустой или не содержит символ @: {}", user);
             throw new RuntimeException("email не может быть пустой и должна содержать символ @");
@@ -29,7 +28,7 @@ public class ValidateService {
         }
     }
 
-    public void validateFilm(Film film) {
+    public static void validateFilm(Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
             log.warn("name пустое: {}", film);
             throw new RuntimeException("name название не может быть пустым");

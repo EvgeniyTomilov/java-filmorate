@@ -13,7 +13,7 @@ class ValidateServiceTest {
         ValidateService validateService = new ValidateService();
         User user = new User();
         user.setEmail(" ");
-        assertThrows(RuntimeException.class, () -> validateService.validateUser(user));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateUser(user));
     }
 
     @Test
@@ -22,7 +22,7 @@ class ValidateServiceTest {
         User user = new User();
         user.setEmail("email@list.ru");
         user.setLogin(" ");
-        assertThrows(RuntimeException.class, () -> validateService.validateUser(user));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateUser(user));
     }
 
     @Test
@@ -32,7 +32,7 @@ class ValidateServiceTest {
         user.setEmail("email@list.ru");
         user.setLogin("login");
         user.setName(" ");
-        assertThrows(RuntimeException.class, () -> validateService.validateUser(user));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateUser(user));
     }
 
     @Test
@@ -43,7 +43,7 @@ class ValidateServiceTest {
         user.setLogin("login");
         user.setName("");
         user.setBirthday(LocalDate.of(2045, 5, 5));
-        assertThrows(RuntimeException.class, () -> validateService.validateUser(user));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateUser(user));
     }
 
     @Test
@@ -51,7 +51,7 @@ class ValidateServiceTest {
         ValidateService validateService = new ValidateService();
         Film film = new Film();
         film.setName(" ");
-        assertThrows(RuntimeException.class, () -> validateService.validateFilm(film));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateFilm(film));
     }
 
     @Test
@@ -63,7 +63,7 @@ class ValidateServiceTest {
                 "ksbv dlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsbl" +
                 "sllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbksbvlkasdhjbvlkalsblsllhsjbksdhvknbsvnbks" +
                 "bvvbfdgefbgsdfbsdfbsdfbsdgfbsbfdbgdsfbvgf nknxzbv kdfsvzcdldkbjsdkjbgpksdgfpbjsodpkgbjnvkv");
-        assertThrows(RuntimeException.class, () -> validateService.validateFilm(film));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateFilm(film));
     }
 
     @Test
@@ -73,7 +73,7 @@ class ValidateServiceTest {
         film.setName("name film");
         film.setDescription("vgf nknxzbv kdfsvzcdldkbjsdkjbgpksdgfpbjsodpkgbjnvkv");
         film.setReleaseDate(LocalDate.of(1845, 5, 5));
-        assertThrows(RuntimeException.class, () -> validateService.validateFilm(film));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateFilm(film));
     }
 
     @Test
@@ -84,6 +84,6 @@ class ValidateServiceTest {
         film.setDescription("vgf nknxzbv kdfsvzcdldkbjsdkjbgpksdgfpbjsodpkgbjnvkv");
         film.setReleaseDate(LocalDate.of(1945, 5, 5));
         film.setDuration(-2L);
-        assertThrows(RuntimeException.class, () -> validateService.validateFilm(film));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateFilm(film));
     }
 }
