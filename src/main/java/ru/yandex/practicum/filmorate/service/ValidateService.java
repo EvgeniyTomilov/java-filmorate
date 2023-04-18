@@ -45,7 +45,6 @@ public class ValidateService {
         if (film.getDuration() < 0) {
             log.warn("duration меньше ноля: {}", film);
             throw new RuntimeException("duration фильма должна быть положительной.");
-
         }
     }
 }
