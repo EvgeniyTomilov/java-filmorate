@@ -31,7 +31,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film){
+    public Film update(@RequestBody Film film) {
         validateService.validateFilm(film);
         return repository.update(film);
     }
