@@ -15,24 +15,24 @@ public class FilmRepository {
     private long generatorId;
     private Map<Long, Film> films = new HashMap();
 
-    public long generateId (){
-        return  ++generatorId;
+    public long generateId() {
+        return ++generatorId;
     }
 
-    public Film save(Film film){
+    public Film save(Film film) {
         film.setId(generateId());
         films.put(film.getId(), film);
         return film;
     }
 
-    public Film update (Film film) {
+    public Film update(Film film) {
         if (films.containsKey(film.getId())) {
             films.replace(film.getId(), film);
             log.info("update film: {}", film);
-        }else {
-                throw new RuntimeException();
-            }
-       return film;
+        } else {
+            throw new RuntimeException();
+        }
+        return film;
     }
 
     public List<Film> getFilms() {

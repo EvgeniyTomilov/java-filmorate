@@ -10,18 +10,18 @@ import java.time.LocalDate;
 @Component
 @Slf4j
 public class ValidateService {
-   public void validateUser(User user) {
+    public void validateUser(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.warn("email пустой или не содержит символ @: {}", user);
             throw new RuntimeException("email не может быть пустой и должна содержать символ @");
         }
-        if (user.getLogin() == null || user.getLogin().contains(" ") ||  user.getLogin().isEmpty()) {
+        if (user.getLogin() == null || user.getLogin().contains(" ") || user.getLogin().isEmpty()) {
             log.warn("login пустой или  содержит пробелы: {}", user);
             throw new RuntimeException("login не может быть пустым и содержать пробелы");
         }
         if (user.getName() == null || user.getName().isBlank()) {
             log.warn("name пустое: {}", user);
-           user.setName(user.getLogin());
+            user.setName(user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
             log.warn("birthday еще не наступило: {}", user);

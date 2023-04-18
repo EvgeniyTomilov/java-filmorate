@@ -13,21 +13,21 @@ public class UserRepository {
     private long generatorId;
     private Map<Long, User> users = new HashMap<>();
 
-    public long generateId (){
-        return  ++generatorId;
+    public long generateId() {
+        return ++generatorId;
     }
 
-    public User save (User user){
+    public User save(User user) {
         user.setId(generateId());
         users.put(user.getId(), user);
         return user;
     }
 
-    public User update (User user) {
+    public User update(User user) {
         if (users.containsKey(user.getId())) {
             users.replace(user.getId(), user);
             log.info("update user: {}", user);
-        }else {
+        } else {
             throw new RuntimeException();
         }
         return user;

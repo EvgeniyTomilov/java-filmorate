@@ -32,7 +32,7 @@ class ValidateServiceTest {
     }
 
     @Test
-    void nameUser(){
+    void nameUser() {
         ValidateService validateService = new ValidateService();
         User user = new User();
         user.setEmail("email@list.ru");
