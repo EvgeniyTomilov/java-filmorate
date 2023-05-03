@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dao;
+package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,20 +11,23 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class FilmRepository {
+public class InMemoryFilmStorage implements FilmStorage {
     private long generatorId;
     private Map<Long, Film> films = new HashMap();
 
+    @Override
     public long generateId() {
         return ++generatorId;
     }
 
+    @Override
     public Film save(Film film) {
         film.setId(generateId());
         films.put(film.getId(), film);
         return film;
     }
 
+    @Override
     public Film update(Film film) {
         if (films.containsKey(film.getId())) {
             films.replace(film.getId(), film);
@@ -35,6 +38,7 @@ public class FilmRepository {
         return film;
     }
 
+    @Override
     public List<Film> getFilms() {
         return new ArrayList<Film>(films.values());
     }
