@@ -42,5 +42,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Film> getFilms() {
         return new ArrayList<Film>(films.values());
     }
+
+    @Override
+    public Film getFilmById(Long id) {
+        return films.get(id);
+    }
 }
 
