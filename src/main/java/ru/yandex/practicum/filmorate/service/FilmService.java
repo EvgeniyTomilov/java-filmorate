@@ -48,7 +48,6 @@ public class FilmService {
 
     public List<Film> getTopByLikes(Long count) {
 
-
         List<Film> films = filmStorage.getFilms();
         Comparator<Film> comparator = (film1, film2) -> {
             if (film1.getLike().size() > film2.getLike().size()) {
