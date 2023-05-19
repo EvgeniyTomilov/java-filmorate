@@ -27,8 +27,14 @@ public class UserService {
 
     public User addFriend(Long id, Long friendId) {
         User user = userStorage.getUserById(id);
+        ValidateService.validateId(id);
+        ValidateService.validateId(friendId);
         Set<Long> friends = user.getFriends();
         friends.add(friendId);
+        User friend = userStorage.getUserById(friendId);
+        Set<Long> friends1 = friend.getFriends();
+        friends1.add(id);
+        userStorage.update(friend);
         return userStorage.update(user);
     }
 
@@ -82,6 +88,7 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
+
         return userStorage.getUserById(id);
     }
 

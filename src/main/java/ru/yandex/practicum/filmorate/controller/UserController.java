@@ -20,6 +20,7 @@ public class UserController {
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         log.info("Get user by id = {}", id);
+        ValidateService.validateId(id);
         return userService.getUserById(id);
     }
 
@@ -27,14 +28,14 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User user) {
         log.info("create user: {}", user);
-        ValidateService.validateUser(user);
+        ValidateService.validateId(user);
         return userService.save(user);
 
     }
 
     @PutMapping
     public User update(@RequestBody User user) {
-        ValidateService.validateUser(user);
+        ValidateService.validateId(user);
         return userService.update(user);
     }
 
@@ -59,7 +60,7 @@ public class UserController {
         return userService.getFriendsList(id);
     }
 
-    @GetMapping("/{id}/friends/common/{friendId}")
+    @GetMapping("/{id}/friends/common/{friendId}") //GET /users/{id}/friends/common/{otherId}
     public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long friendId) {
         return userService.getCommonFriends(id, friendId);
     }
