@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+
 import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValidateServiceTest {
@@ -13,7 +15,7 @@ class ValidateServiceTest {
         ValidateService validateService = new ValidateService();
         User user = new User();
         user.setEmail(" ");
-        assertThrows(RuntimeException.class, () -> ValidateService.validateUser(user));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateId(user));
     }
 
     @Test
@@ -22,7 +24,7 @@ class ValidateServiceTest {
         User user = new User();
         user.setEmail("email@list.ru");
         user.setLogin(" ");
-        assertThrows(RuntimeException.class, () -> ValidateService.validateUser(user));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateId(user));
     }
 
     @Test
@@ -32,7 +34,7 @@ class ValidateServiceTest {
         user.setEmail("email@list.ru");
         user.setLogin("login");
         user.setName(" ");
-        assertThrows(RuntimeException.class, () -> ValidateService.validateUser(user));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateId(user));
     }
 
     @Test
@@ -43,7 +45,7 @@ class ValidateServiceTest {
         user.setLogin("login");
         user.setName("");
         user.setBirthday(LocalDate.of(2045, 5, 5));
-        assertThrows(RuntimeException.class, () -> ValidateService.validateUser(user));
+        assertThrows(RuntimeException.class, () -> ValidateService.validateId(user));
     }
 
     @Test
