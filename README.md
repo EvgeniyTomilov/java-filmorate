@@ -13,7 +13,7 @@ SELECT f.name AS film_name,
        f.duration AS film_duration
 FROM film AS f
 ORDER BY film_duration
-LIMIT 10
+LIMIT 10;
 ```
 
 # 2. Вывести названия всех фильмов, которые нравятся пользователю с id 13  
