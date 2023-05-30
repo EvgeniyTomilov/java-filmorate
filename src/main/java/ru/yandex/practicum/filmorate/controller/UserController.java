@@ -17,13 +17,6 @@ import java.util.List;
 public class UserController {
     final UserService userService;
 
-    @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        log.info("Get user by id = {}", id);
-        ValidateService.validateId(id);
-        return userService.getUserById(id);
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User user) {
@@ -43,6 +36,13 @@ public class UserController {
     public List<User> getUsers() {
         log.info("Текущее количество users: {}", userService.getUsers().size());
         return userService.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        log.info("Get user by id = {}", id);
+        ValidateService.validateId(id);
+        return userService.getUserById(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
