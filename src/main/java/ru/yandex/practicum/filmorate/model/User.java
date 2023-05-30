@@ -9,8 +9,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Builder
 @Data
+@Builder
 @AllArgsConstructor
 public class User {
     private Long id;
