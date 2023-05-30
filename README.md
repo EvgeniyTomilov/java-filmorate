@@ -2,8 +2,8 @@
 # ER-диаграмма базы данных.
 База данных основана на связях один ко многим.
 
-(https://github.com/EvgeniyTomilov/java-filmorate/edit/add-database/схема4.JPG)
-![схема4](https://github.com/EvgeniyTomilov/java-filmorate/assets/116760791/df87b57f-aa32-40a0-86c6-c5505c29aa90)
+
+![схема4](https://github.com/EvgeniyTomilov/java-filmorate/blob/add-database/f-r.PNG)
 
 
 # Примеры запросов.
