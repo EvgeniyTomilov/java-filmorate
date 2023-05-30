@@ -32,8 +32,8 @@ public class FilmDbStorage implements FilmStorage {
                 .name(rs.getString("name"))
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("releaseDate").toLocalDate())
-                .duration(rs.getLong("duration"))
-                .rateMPA(ratingStorage.getRatingById(rs.getInt("ratingMPAId")).orElse(null))
+                .duration(rs.getInt("duration"))
+                .mpa(ratingStorage.getRatingById(rs.getInt("ratingMPAId")).orElse(null))
                 .genres(getGenresOfFilm(filmId))
                 .build();
         film.setId(filmId);
@@ -62,7 +62,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film add(Film film) {
         String filmSqlQuery =
-                "INSERT INTO films (name, description, releaseDate, duration, rateMPA) " +
+                "INSERT INTO films (name, description, releaseDate, duration, ratingMPAId) " +
                         "VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int updatedRowsCount = jdbcTemplate.update(connection -> {
@@ -70,8 +70,8 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
-            stmt.setLong(4, film.getDuration());
-            stmt.setInt(5, film.getRateMPA().getId());
+            stmt.setInt(4, film.getDuration());
+            stmt.setInt(5, film.getMpa().getId());
             return stmt;
         }, keyHolder);
 
@@ -112,7 +112,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
-                film.getRateMPA().getId(),
+                film.getMpa().getId(),
                 film.getId());
 
         if (updatedRowsCount == 0) {

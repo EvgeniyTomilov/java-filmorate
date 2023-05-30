@@ -2,34 +2,30 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.ValidateService;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/films")
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/films")
 public class FilmController {
-    final FilmService filmService;
+    private final FilmService filmService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Film create(@RequestBody Film film) {
-        log.info("create film: {}", film);
-        ValidateService.validateFilm(film);
+    public Film addFilm(@Valid @RequestBody Film film) {
+        log.info("Добавление фильма...");
         return filmService.addFilm(film);
-
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
-        ValidateService.validateFilm(film);
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        log.info("Обновление фильма " + film.getId() + "...");
         return filmService.updateFilm(film);
     }
 
@@ -46,10 +42,9 @@ public class FilmController {
         return filmService.getAllFilms();
     }
 
-    @GetMapping("/{id}")
-    public Film getFilm(@PathVariable Long id) {
-        log.info("Get film by id = {}", id);
-        ValidateService.validateId(id);
+    @GetMapping(value = "/{id}")
+    public Film getFilmById(@PathVariable Long id) {
+        log.info("Вызов фильма по id:" + id + "...");
         return filmService.getFilmById(id);
     }
 
@@ -73,4 +68,3 @@ public class FilmController {
         return filmService.getPopularFilms(count);
     }
 }
-
