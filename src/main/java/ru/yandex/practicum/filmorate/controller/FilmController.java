@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -19,7 +19,7 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        log.info("Добавление фильма...");
+        log.info("Добавление фильма");
         return filmService.addFilm(film);
     }
 
@@ -38,33 +38,33 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> getAllFilms() {
-        log.info("Вызов всех фильмов...");
+        log.info("Вызов списка всех фильмов.");
         return filmService.getAllFilms();
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Long id) {
         log.info("Вызов фильма по id:" + id + "...");
         return filmService.getFilmById(id);
     }
 
-    @PutMapping(value = "/{id}/like/{userId}")
+    @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("Добавление лайка пользователем " + userId + " фильму " + id + "...");
         filmService.addLike(id, userId);
         log.info("Лайк добавлен");
     }
 
-    @DeleteMapping(value = "/{id}/like/{userId}")
-    public void removeLike(@PathVariable Long id, @PathVariable Long userId) {
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("Удаление лайка пользователем " + userId + " фильму " + id + "...");
-        filmService.removeLike(id, userId);
+        filmService.deleteLike(id, userId);
         log.info("Лайк удален");
     }
 
-    @GetMapping(value = "/popular")
-    public List<Film> getPopular(@RequestParam(value = "count", required = false, defaultValue = "10") Integer count) {
-        log.info("Вызов популярных фильмов...");
-        return filmService.getPopularFilms(count);
+    @GetMapping("/popular")
+    public List<Film> getListPopularFilms(@RequestParam(value = "count", required = false, defaultValue = "10") Integer count) {
+        log.info("Вызов списка популярных фильмов...");
+        return filmService.getListPopularFilms(count);
     }
 }

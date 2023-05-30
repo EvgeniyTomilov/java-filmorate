@@ -51,7 +51,7 @@ public class GenresDbStorage implements GenresStorage {
         try {
             genres = jdbcTemplate.query(sqlQueryGetAllGenres, this::rowMapToGenre);
         } catch (EmptyResultDataAccessException e) {
-            log.info("В базе нет информации по запросу {}", sqlQueryGetAllGenres);
+
         }
         return genres;
     }

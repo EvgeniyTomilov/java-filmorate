@@ -1,4 +1,4 @@
-merge into MPA (rateId, name)
+merge into MPARatings (ratingMPAId, name)
 values
 (1,'G'),
 (2,'PG'),
@@ -6,7 +6,7 @@ values
 (4,'R'),
 (5,'NC-17');
 
-merge into genre (genreId, name)
+merge into genreNames (genreId, genre)
 values
 (1, 'Комедия'),
 (2 , 'Драма'),

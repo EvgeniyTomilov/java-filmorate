@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.film;
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +67,7 @@ public class FilmService {
         }
     }
 
-    public void removeLike(Long id, Long userId) {
+    public void deleteLike(Long id, Long userId) {
         if (containsFilm(id)) {
             if (containsUser(userId)) {
                 likesStorage.removeLike(id, userId);
@@ -81,7 +81,7 @@ public class FilmService {
         }
     }
 
-    public List<Film> getPopularFilms(Integer count) {
+    public List<Film> getListPopularFilms(Integer count) {
         return likesStorage.getTopFilmLikes()
                 .stream()
                 .limit(count)

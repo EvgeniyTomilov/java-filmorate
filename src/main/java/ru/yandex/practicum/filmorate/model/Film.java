@@ -18,16 +18,16 @@ public class Film {
 
     private Long id;
 
-    @NotBlank(message = "name не может быть пустым или null")
+    @NotBlank(message = "name не может быть пустым ")
     private String name;
 
-    @Size(message = "количество знаков для description не должно превышать 200", max = 200)
+    @Size(message = "максимальная длина описания — 200 символов", max = 200)
     private String description;
 
-    @AfterBirthOfCinema(message = "releaseDate не может быть до даты появления кино")
+    @AfterBirthOfCinema(message = "дата релиза — не раньше 28 декабря 1895")
     private LocalDate releaseDate;
 
-    @Positive(message = "duration не может быть отрицательным значением")
+    @Positive(message = "продолжительность фильма  не может быть отрицательным значением")
     private int duration;
 
     private MPA mpa;

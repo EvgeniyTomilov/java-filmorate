@@ -1,10 +1,10 @@
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS films;
-DROP TABLE IF EXISTS filmGenre;
+DROP TABLE IF EXISTS genreNames;
 DROP TABLE IF EXISTS genre;
-DROP TABLE IF EXISTS MPA;
+DROP TABLE IF EXISTS MPARatings;
 DROP TABLE IF EXISTS filmLikes;
-DROP TABLE IF EXISTS friends;
+DROP TABLE IF EXISTS userFriends;
 
 CREATE TABLE IF NOT EXISTS films(
         id LONG PRIMARY KEY AUTO_INCREMENT,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS films(
         releaseDate DATE,
         duration INTEGER,
         rate LONG,
-        rateId INTEGER
+        ratingMPAId INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS users(
@@ -24,29 +24,29 @@ CREATE TABLE IF NOT EXISTS users(
         birthday DATE
 );
 
-CREATE TABLE IF NOT EXISTS genre(
+CREATE TABLE IF NOT EXISTS genreNames(
          genreId INTEGER PRIMARY KEY AUTO_INCREMENT,
-         name VARCHAR
+         genre VARCHAR
 );
 
-CREATE TABLE IF NOT EXISTS filmGenre(
+CREATE TABLE IF NOT EXISTS genre(
          filmId INTEGER,
          genreId INTEGER,
          PRIMARY KEY (filmId, genreId)
 );
 
-CREATE TABLE IF NOT EXISTS MPA(
-        rateId INTEGER PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS MPARatings(
+        ratingMPAId INTEGER PRIMARY KEY AUTO_INCREMENT,
         name VARCHAR
 );
 
 CREATE TABLE IF NOT EXISTS filmLikes(
-         filmId LONG,
+         filmId INTEGER,
          userId LONG,
          PRIMARY KEY (filmId, userId)
 );
 
-CREATE TABLE IF NOT EXISTS friends(
+CREATE TABLE IF NOT EXISTS userFriends(
         userId LONG,
         friendsId LONG,
         status BOOLEAN,

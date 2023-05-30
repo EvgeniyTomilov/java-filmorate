@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.rating;
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

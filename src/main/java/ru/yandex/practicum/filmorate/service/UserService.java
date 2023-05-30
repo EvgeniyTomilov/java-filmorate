@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.user;
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public class UserService {
         }
     }
 
-    public void removeFriend(Long id, Long friendId) {
+    public void deleteFriend(Long id, Long friendId) {
         if (contains(id)) {
             if (contains(friendId)) {
                 userStorage.removeFriend(id, friendId);
@@ -83,7 +83,7 @@ public class UserService {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    public Collection<User> getListOfMutualFriends(Long id, Long otherId) {
+    public Collection<User> getListSharedFriends(Long id, Long otherId) {
         if (contains(id)) {
             if (contains(otherId)) {
                 return userStorage.getCommonFriends(id, otherId);
