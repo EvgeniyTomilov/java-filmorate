@@ -1,4 +1,4 @@
-merge into MPARatings (ratingMPAId, name)
+merge into MPARatings (ratingMPAId, ratingName)
 values
 (1,'G'),
 (2,'PG'),

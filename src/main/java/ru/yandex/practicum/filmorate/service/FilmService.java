@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,13 +15,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class FilmService {
 
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    @Autowired
+    @Qualifier(value = "filmDbStorage")
+    private FilmStorage filmStorage;
+    @Autowired
+    @Qualifier(value = "userDbStorage")
+    private UserStorage userStorage;
     private final LikesStorage likesStorage;
+
+    public FilmService( LikesStorage likesStorage) {
+        this.likesStorage = likesStorage;
+    }
 
     public Film addFilm(Film film) {
         return filmStorage.add(film);

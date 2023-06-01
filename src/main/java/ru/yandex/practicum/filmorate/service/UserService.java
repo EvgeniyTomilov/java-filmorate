@@ -2,18 +2,23 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
-import java.util.*;
+
+import java.util.Collection;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class UserService {
-    private final UserStorage userStorage;
+
+    @Autowired
+    @Qualifier(value = "userDbStorage")
+    private UserStorage userStorage;
 
     public User createUser(User user) {
         return userStorage.add(user);

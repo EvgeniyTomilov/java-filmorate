@@ -3,8 +3,10 @@ package ru.yandex.practicum.filmorate.storage.rating;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.MPA;
 
 import java.sql.ResultSet;
@@ -27,7 +29,7 @@ public class RatingDbStorage implements RatingStorage {
     private MPA rowMapToMpa(ResultSet resultSet, int i) throws SQLException {
         return MPA.builder()
                 .id(resultSet.getInt("ratingMPAId"))
-                .name(resultSet.getString("name"))
+                .name(resultSet.getString("ratingName"))
                 .build();
     }
 
@@ -37,7 +39,7 @@ public class RatingDbStorage implements RatingStorage {
         List<MPA> mpas = jdbcTemplate.query(sqlQueryGetById, (rs, rowNum) -> rowMapToMpa(rs, mpaId), mpaId);
         if (mpas.isEmpty()) {
             log.info("Рейтинг с идентификатором {} не найден.", mpaId);
-            return Optional.empty();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         log.info("Найден рейтинг: {}", mpas.get(0));
         return Optional.of(mpas.get(0));

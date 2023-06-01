@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
-@Component("UserDbStorage")
+@Component("userDbStorage")
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
 

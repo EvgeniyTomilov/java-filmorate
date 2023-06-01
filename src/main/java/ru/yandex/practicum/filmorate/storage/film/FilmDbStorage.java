@@ -8,8 +8,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.genres.GenresStorage;
-import ru.yandex.practicum.filmorate.storage.rating.RatingStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -18,13 +18,15 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("FilmDbStorage")
+@Component("filmDbStorage")
 @Slf4j
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
+    public static final String GET_ALL_QUERY = "SELECT * FROM films join MPARatings on films.ratingMPAId = MPARatings.ratingMPAId";
+    public static final String GET_BY_ID_QUERY = "SELECT * FROM films join MPARatings on films.ratingMPAId = MPARatings.ratingMPAId WHERE id = ?";
+
     private final JdbcTemplate jdbcTemplate;
     private final GenresStorage genreStorage;
-    private final RatingStorage ratingStorage;
 
     private Film rowMapFilm(ResultSet rs) throws SQLException {
         Long filmId = rs.getLong("id");
@@ -33,7 +35,10 @@ public class FilmDbStorage implements FilmStorage {
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("releaseDate").toLocalDate())
                 .duration(rs.getInt("duration"))
-                .mpa(ratingStorage.getRatingById(rs.getInt("ratingMPAId")).orElse(null))
+                .mpa(MPA.builder()
+                        .id(rs.getInt("ratingMPAId"))
+                        .name(rs.getString("RATINGNAME"))
+                        .build())
                 .genres(getGenresOfFilm(filmId))
                 .build();
         film.setId(filmId);
@@ -42,15 +47,12 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAll() {
-        String sqlQuery =
-                "SELECT *" + "FROM films";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> rowMapFilm(rs));
+        return jdbcTemplate.query(GET_ALL_QUERY, (rs, rowNum) -> rowMapFilm(rs));
     }
 
     @Override
     public Optional<Film> getById(Long id) {
-        String sqlQuery = "SELECT * " + "FROM films " + "WHERE id = ?";
-        List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> rowMapFilm(rs), id);
+        List<Film> films = jdbcTemplate.query(GET_BY_ID_QUERY, (rs, rowNum) -> rowMapFilm(rs), id);
         if (films.isEmpty()) {
             log.info("Фильма с идентификатором {} нет.", id);
             return Optional.empty();
