@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.customAnnotation.NoSpaces;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
@@ -32,10 +35,12 @@ public class User {
     public void setFriends(Set<Long> friends) {
         this.friends.addAll(friends);
     }
+
     public void addFriend(Long friendId) {
         this.friends.add(friendId);
     }
-    public void removeFriend(Long friendId){
+
+    public void removeFriend(Long friendId) {
         this.friends.remove(friendId);
     }
 }
