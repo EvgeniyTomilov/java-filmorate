@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.Film;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +33,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Optional<Film> update(@Valid Film film) {
-        if (film != null){
+        if (film != null) {
             if (filmHashMap.containsKey(film.getId())) {
                 filmHashMap.put(film.getId(), film);
                 log.info("Фильм обновлен");
@@ -70,7 +71,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
 
-    public Boolean contains(Long id){
+    public Boolean contains(Long id) {
         return filmHashMap.containsKey(id);
     }
 }
