@@ -32,7 +32,7 @@ public class Film {
 
     private MPA mpa;
 
-    private double rate;
+    private int rate;
 
     private LinkedHashSet<Genre> genres;
 }
