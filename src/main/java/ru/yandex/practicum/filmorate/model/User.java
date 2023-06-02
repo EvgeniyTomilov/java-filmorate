@@ -1,19 +1,46 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.validation.customAnnotation.NoSpaces;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class User {
     private Long id;
+
+    @NotBlank(message = "электронная почта не может быть пустой")
+    @Email(message = "электронная почта  должна содержать символ @")
     private String email;
+
+    @NotBlank(message = "login не может быть пустым ")
+    @NoSpaces(message = "login не может содержать пробелы")
     private String login;
+
     private String name;
+
+    @PastOrPresent(message = "дата рождения не может быть в будущем")
     private LocalDate birthday;
-    @JsonIgnore
-    private Set<Long> friends = new HashSet<>();
+
+    private Set<Long> friends;
+
+    public void setFriends(Set<Long> friends) {
+        this.friends.addAll(friends);
+    }
+
+    public void addFriend(Long friendId) {
+        this.friends.add(friendId);
+    }
+
+    public void removeFriend(Long friendId) {
+        this.friends.remove(friendId);
+    }
 }

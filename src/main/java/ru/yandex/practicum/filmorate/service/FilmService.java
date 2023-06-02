@@ -1,74 +1,109 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class FilmService {
 
-    private final FilmStorage filmStorage;
+    @Autowired
+    @Qualifier(value = "filmDbStorage")
+    private FilmStorage filmStorage;
+    @Autowired
+    @Qualifier(value = "userDbStorage")
+    private UserStorage userStorage;
+    private final LikesStorage likesStorage;
 
-    public Film save(Film film) {
-        return filmStorage.save(film);
+    public FilmService(LikesStorage likesStorage) {
+        this.likesStorage = likesStorage;
     }
 
-    public Film update(Film film) {
-        return filmStorage.update(film);
+    public Film addFilm(Film film) {
+        return filmStorage.add(film);
     }
 
-    public List<Film> getFilms() {
-        return filmStorage.getFilms();
-    }
-
-    public Film addLike(Long id, Long userId) {
-        Film film = filmStorage.getFilmById(id);
-        ValidateService.validateId(id);
-        ValidateService.validateId(userId);
-        Set<Long> like = film.getLike();
-
-        if (userId == null) {
-            throw new UserNotFoundException(String.format("Пользователь %s не найден", userId));
+    public Film updateFilm(Film film) {
+        if (containsFilm(film.getId())) {
+            return filmStorage.update(film).get();
         }
-        like.add(userId);
-        return filmStorage.update(film);
-    }
-
-    public Film deleteLikeByUserId(Long id, Long userId) {
-        Film film = filmStorage.getFilmById(id);
-        ValidateService.validateId(id);
-        ValidateService.validateId(userId);
-        Set<Long> like = film.getLike();
-        like.remove(userId);
-        return filmStorage.update(film);
+        log.info("Фильм " + film.getId() + " не найден");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Film getFilmById(Long id) {
-        return filmStorage.getFilmById(id);
+        if (containsFilm(id)) {
+            return filmStorage.getById(id).get();
+        }
+        log.info("Фильм " + id + " не найден");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    public List<Film> getTopByLikes(Long count) {
+    public void deleteFilm(Long id) {
+        if (containsFilm(id)) {
+            filmStorage.delete(id);
+        }
+        log.info("Фильм " + id + " не найден");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
 
-        List<Film> films = filmStorage.getFilms();
-        Comparator<Film> comparator = (film1, film2) -> {
-            if (film1.getLike().size() > film2.getLike().size()) {
-                return -1;
-            } else if (film1.getLike().size() == film2.getLike().size()) {
-                return 0;
+    public Collection<Film> getAllFilms() {
+        return filmStorage.getAll();
+    }
+
+    public void addLike(Long id, Long userId) {
+        if (containsFilm(id)) {
+            if (containsUser(userId)) {
+                likesStorage.addLike(id, userId);
+            } else {
+                log.info("Пользователь " + userId + " не найден");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
-            return 1;
-        };
-        return films.stream()
-                .sorted(comparator)
+        } else {
+            log.info("Фильм " + id + " не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public void deleteLike(Long id, Long userId) {
+        if (containsFilm(id)) {
+            if (containsUser(userId)) {
+                likesStorage.removeLike(id, userId);
+            } else {
+                log.info("Пользователь " + userId + " не найден");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            log.info("Фильм " + id + " не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public List<Film> getListPopularFilms(Integer count) {
+        return likesStorage.getTopFilmLikes()
+                .stream()
                 .limit(count)
+                .map(this::getFilmById)
                 .collect(Collectors.toList());
+    }
+
+    private boolean containsUser(Long id) {
+        return userStorage.getUsersMap().containsKey(id);
+    }
+
+    private boolean containsFilm(Long id) {
+        return filmStorage.getById(id).isPresent();
     }
 }

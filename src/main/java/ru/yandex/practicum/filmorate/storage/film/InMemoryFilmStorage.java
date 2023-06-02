@@ -1,55 +1,77 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-    private long generatorId;
-    private Map<Long, Film> films = new HashMap();
+    private final HashMap<Long, Film> filmHashMap = new HashMap<>();
+    private Long id = 0L;
+
 
     @Override
-    public long generateId() {
-        return ++generatorId;
+    public Film add(@Valid Film film) {
+        if (film != null) {
+            film.setId(++id);
+            filmHashMap.put(film.getId(), film);
+            log.info("Фильм добавлен");
+            return film;
+        }
+        log.info("Объект фильм был null");
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    public Film save(Film film) {
-        film.setId(generateId());
-        films.put(film.getId(), film);
-        return film;
+    public Optional<Film> update(@Valid Film film) {
+        if (film != null) {
+            if (filmHashMap.containsKey(film.getId())) {
+                filmHashMap.put(film.getId(), film);
+                log.info("Фильм обновлен");
+                return Optional.of(film);
+            }
+            log.info("Фильм " + film.getId() + " не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        log.info("Объект пользователь был null");
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    public Film update(Film film) {
-        if (films.containsKey(film.getId())) {
-            films.replace(film.getId(), film);
-            log.info("update film: {}", film);
+    public Optional<Film> getById(Long id) {
+        if (filmHashMap.containsKey(id)) {
+            return Optional.of(filmHashMap.get(id));
+        }
+        log.info("Фильм " + id + " не найден");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (filmHashMap.containsKey(id)) {
+            filmHashMap.remove(id);
         } else {
-            throw new RuntimeException();
+            log.info("Фильм " + id + " не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return film;
     }
 
     @Override
-    public List<Film> getFilms() {
-        return new ArrayList<Film>(films.values());
+    public Collection<Film> getAll() {
+        return new ArrayList<>(filmHashMap.values());
     }
 
-    @Override
-    public Film getFilmById(Long id) {
-        if (!films.containsKey(id)) {
-            throw new FilmNotFoundException(String.format("Фильм  %s не найден", id));
-        }
-        return films.get(id);
+
+    public Boolean contains(Long id) {
+        return filmHashMap.containsKey(id);
     }
 }
-

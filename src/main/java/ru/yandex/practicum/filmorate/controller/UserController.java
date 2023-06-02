@@ -2,66 +2,75 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.service.ValidateService;
 
-import java.util.List;
+import javax.validation.Valid;
+import java.util.Collection;
 
 @RestController
+@Slf4j
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Slf4j
 public class UserController {
-    final UserService userService;
-
-    @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        log.info("Get user by id = {}", id);
-        ValidateService.validateId(id);
-        return userService.getUserById(id);
-    }
+    private final UserService userService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public User create(@RequestBody User user) {
-        log.info("create user: {}", user);
-        ValidateService.validateId(user);
-        return userService.save(user);
-
+    public User createUser(@Valid @RequestBody User user) {
+        log.info("Создание пользователя...");
+        return userService.createUser(user);
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
-        ValidateService.validateId(user);
-        return userService.update(user);
+    public User updateUser(@Valid @RequestBody User user) {
+        log.info("Обновление пользователя " + user.getId() + "...");
+        return userService.updateUser(user);
+    }
+
+    @DeleteMapping
+    public void deleteUser(@PathVariable Long id) {
+        log.info("Удаление пользователя...");
+        userService.deleteUser(id);
+        log.info("Пользователь удален");
     }
 
     @GetMapping
-    public List<User> getUsers() {
-        log.info("Текущее количество users: {}", userService.getUsers().size());
-        return userService.getUsers();
+    public Collection<User> getAllUsers() {
+        log.info("Вызов всех пользователей...");
+        return userService.getAllUsers();
     }
 
-    @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        return userService.addFriend(id, friendId);
+    @GetMapping(value = "/{id}")
+    public User getUserById(@Valid @PathVariable Long id) {
+        log.info("Вызов пользователя по ID:" + id + "...");
+        return userService.getUserById(id);
     }
 
-    @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriendById(@PathVariable Long id, @PathVariable Long friendId) {
-        return userService.deleteFriendById(id, friendId);
+    @PutMapping("/{id}/friends/{userId}")
+    public void addFriend(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        log.info("Добавление друга " + id + "...");
+        userService.addFriend(id, userId);
+        log.info("Друг добавлен");
+    }
+
+    @DeleteMapping("/{id}/friends/{userId}")
+    public void deleteFriend(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        log.info("Добавление друга " + id + "...");
+        userService.deleteFriend(id, userId);
+        log.info("Друг удален");
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getFriendById(@PathVariable Long id) {
-        return userService.getFriendsList(id);
+    public Collection<User> getListOfFriends(@Valid @PathVariable Long id) {
+        log.info("Вызов друзей пользователя" + id + "...");
+        return userService.getListOfFriends(id);
     }
 
-    @GetMapping("/{id}/friends/common/{friendId}") //GET /users/{id}/friends/common/{otherId}
-    public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long friendId) {
-        return userService.getCommonFriends(id, friendId);
+
+    @GetMapping("/{id}/friends/common/{userId}")
+    public Collection<User> getListSharedFriends(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+        log.info("Вызов взаимных друзей пользователя " + id + " и пользователя " + userId + "...");
+        return userService.getListSharedFriends(id, userId);
     }
 }

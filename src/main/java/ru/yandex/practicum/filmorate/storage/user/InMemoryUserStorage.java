@@ -1,56 +1,135 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.validation.Valid;
+import java.util.*;
 
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    private long generatorId = 0;
-    private Map<Long, User> users = new HashMap<>();
+    private final HashMap<Long, User> userHashMap = new HashMap<>();
+    private Long id = 0L;
 
     @Override
-    public long generateId() {
-        return ++generatorId;
+    public User add(@Valid User user) {
+        if (user != null) {
+            user.setId(++id);
+            userHashMap.put(user.getId(), user);
+            log.info("Пользователь добавлен");
+            return user;
+        }
+        log.info("Объект пользователь был null");
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    public User save(User user) {
-        user.setId(generateId());
-        users.put(user.getId(), user);
-        return user;
+    public Optional<User> update(@Valid User user) {
+        if (user != null) {
+            if (userHashMap.containsKey(user.getId())) {
+                userHashMap.put(user.getId(), user);
+                log.info("Пользователь обновлен");
+                return Optional.of(user);
+            }
+            log.info("Пользователь " + user.getId() + " не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        log.info("Объект пользователь был null");
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    public User update(User user) {
-        if (users.containsKey(user.getId())) {
-            users.replace(user.getId(), user);
-            log.info("update user: {}", user);
+    public Optional<User> getById(Long id) {
+        if (userHashMap.containsKey(id)) {
+            return Optional.ofNullable(userHashMap.get(id));
+        }
+        log.info("Пользователь " + id + " не найден");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (userHashMap.containsKey(id)) {
+            userHashMap.remove(id);
         } else {
-            throw new RuntimeException();
+            log.info("Пользователь " + id + " не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return user;
     }
 
     @Override
-    public List<User> getUsers() {
-        return new ArrayList<User>(users.values());
+    public Collection<User> getAll() {
+        return new ArrayList<>(userHashMap.values());
+    }
+
+
+    @Override
+    public Map<Long, User> getUsersMap() {
+        return userHashMap;
     }
 
     @Override
-    public User getUserById(Long id) {
-        if (!users.containsKey(id)) {
-            throw new UserNotFoundException(String.format("Пользователь %s не найден", id));
+    public void addFriend(Long userId, Long idFriend) {
+        User user = userHashMap.get(userId);
+        user.addFriend(idFriend);
+        User friend = userHashMap.get(idFriend);
+        friend.addFriend(userId);
+    }
+
+    @Override
+    public void removeFriend(Long userId, Long idFriend) {
+        User user = userHashMap.get(userId);
+        user.removeFriend(idFriend);
+        User friend = userHashMap.get(idFriend);
+        friend.removeFriend(userId);
+    }
+
+    @Override
+    public List<User> getFriends(Long id) {
+        User user = userHashMap.get(id);
+        Set<Long> friendsIds = user.getFriends();
+
+        List<User> friends = new ArrayList<>();
+
+        for (Long friendsId : friendsIds) {
+            friends.add(userHashMap.get(friendsId));
         }
-        return users.get(id);
+        return friends;
+    }
+
+    @Override
+    public List<User> getCommonFriends(Long firstUserId, Long secondUserId) {
+        User firstUser = userHashMap.get(firstUserId);
+        User secondUser = userHashMap.get(secondUserId);
+
+        Set<Long> firstUserFriends = firstUser.getFriends();
+        Set<Long> secondUserFriends = secondUser.getFriends();
+
+        if (isNullOrEmpty(firstUserFriends) || isNullOrEmpty(secondUserFriends)) {
+            return Collections.emptyList();
+        }
+
+        List<Long> commonFriendIds = new ArrayList<>(firstUserFriends);
+        commonFriendIds.retainAll(secondUserFriends);
+        if (commonFriendIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<User> commonFiends = new ArrayList<>();
+        for (Long friendId : commonFriendIds) {
+            User friend = userHashMap.get(friendId);
+            if (Objects.nonNull(friend)) {
+                commonFiends.add(friend);
+            }
+        }
+        return commonFiends;
+    }
+
+    private boolean isNullOrEmpty(Set<Long> friendIds) {
+        return Objects.isNull(friendIds) || friendIds.isEmpty();
     }
 }
-
-
