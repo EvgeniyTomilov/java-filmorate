@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -41,6 +42,8 @@ public class User {
     }
 
     public void removeFriend(Long friendId) {
-        this.friends.remove(friendId);
+        if (this.friends != null) {
+            this.friends.remove(friendId);
+        }
     }
 }

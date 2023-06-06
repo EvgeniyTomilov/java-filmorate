@@ -56,7 +56,6 @@ public class FilmService {
             filmStorage.delete(id);
         }
         log.info("Фильм " + id + " не найден");
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<Film> getAllFilms() {
