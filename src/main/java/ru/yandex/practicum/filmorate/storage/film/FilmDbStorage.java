@@ -162,4 +162,10 @@ public class FilmDbStorage implements FilmStorage {
                 .map(genreStorage::getGenreById)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
+
+
+    @Override
+    public List<Film> searchFilms(String query, String[] searchParameters) {
+        return null; //  дописать после добавления фичи режисера
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.error.exception.InvalidSearchParameters;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
@@ -105,5 +106,25 @@ public class FilmService {
 
     private boolean containsFilm(Long id) {
         return filmStorage.getById(id).isPresent();
+    }
+
+    public List<Film> searchFilms(String query, String[] searchParameters) {
+        if(query == null || searchParameters == null || searchParameters.length > 2) {
+            throw new InvalidSearchParameters("В параметры поиска ошибка.");
+        }
+        log.info("Service.searchFilms: {} - query, {} - by", query, searchParameters);
+        List<Film> findFilms = filmStorage.searchFilms(query, searchParameters);
+        log.info("Service.searchFilms: {} - Finished", findFilms);
+
+        return addingInfoFilms(findFilms);
+    }
+    private List<Film> addingInfoFilms(List<Film> filmList) {
+        for (Film film : filmList) {
+            film.setGenres(filmStorage.getById(film.getId()));
+            film.setLikes(likesStorage.getLikesByFilmId(film.getId()));
+            film.setMpa();
+           // film.setDirectors();
+        }
+        return filmList;
     }
 }
