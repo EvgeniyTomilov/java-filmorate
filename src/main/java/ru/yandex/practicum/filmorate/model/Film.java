@@ -34,5 +34,7 @@ public class Film {
 
     private int rate;
 
+    private Integer likes;
+
     private LinkedHashSet<Genre> genres;
 }
