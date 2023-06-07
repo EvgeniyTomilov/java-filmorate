@@ -28,6 +28,30 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenresStorage genreStorage;
 
+    private Film rowMapFilms(ResultSet rs, int rowNum) throws SQLException {
+        Long filmId = rs.getLong("id");
+        Genre genre = Genre.builder()
+                .id(rs.getInt("genreid"))
+                .name(rs.getString("genre"))
+                .build();
+        HashSet<Genre> genres = new LinkedHashSet<>();
+        genres.add(genre);
+        Film film = Film.builder()
+                .name(rs.getString("name"))
+                .description(rs.getString("description"))
+                .releaseDate(rs.getDate("releaseDate").toLocalDate())
+                .duration(rs.getInt("duration"))
+                .mpa(MPA.builder()
+                        .id(rs.getInt("ratingMPAId"))
+                        .name(rs.getString("RATINGNAME"))
+                        .build())
+                .genres(genres)
+                .likes(rs.getInt("usersLikes"))
+                .build();
+        film.setId(filmId);
+        return film;
+    }
+
     private Film rowMapFilm(ResultSet rs) throws SQLException {
         Long filmId = rs.getLong("id");
         Film film = Film.builder()
@@ -166,6 +190,21 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> searchFilms(String query, String[] searchParameters) {
-        return null; //  дописать после добавления фичи режисера
+        String queryByOneParam = searchParameters[0].equals("title") ?
+                " lower(film.name) like lower('%" + query + "%')" : //написать мелкими
+                " lower(d.director_name) like lower('%" + query + "%')";
+        String queryByTwoParams = searchParameters.length == 2 ?
+                "or lower(director_name) like lower('%" + query + "%')" : "";// изменить по факту имя директора
+
+        String sqlQuery = "select film.id, film.name, film.description, film.releasedate, film.duration, " +
+                "MPARatings.ratingMPAId, MPARatings.ratingname" +// добавить все поля для фильма
+                "count(likes.userid) as usersLikes, names.genre, names.genreid  from films film " +
+                "join MPARatings on films.ratingMPAId = MPARatings.ratingMPAId " +
+                "join genre genre on film.id = genre.filmid join genrenames names on genre.genreid = names.genreid " +
+                "join filmlikes likes on film.id=likes.filmid " +
+                "where " + queryByOneParam + queryByTwoParams +
+                " group by film.id, " +
+                "names.genreid order by usersLikes desc";
+        return jdbcTemplate.query(sqlQuery,this::rowMapFilms); //  дописать после добавления фичи режисера
     }
 }
