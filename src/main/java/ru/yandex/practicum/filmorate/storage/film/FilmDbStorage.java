@@ -27,8 +27,7 @@ public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private final GenresStorage genreStorage;
-
-    private Film rowMapFilm(ResultSet rs) throws SQLException {
+    public Film rowMapFilm(ResultSet rs) throws SQLException {
         Long filmId = rs.getLong("id");
         Film film = Film.builder()
                 .name(rs.getString("name"))
@@ -45,10 +44,13 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
+
+
     @Override
     public Collection<Film> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, (rs, rowNum) -> rowMapFilm(rs));
     }
+
 
     @Override
     public Optional<Film> getById(Long id) {
@@ -162,4 +164,6 @@ public class FilmDbStorage implements FilmStorage {
                 .map(genreStorage::getGenreById)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
+
+
 }

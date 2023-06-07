@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 @Slf4j
 public class FilmService {
@@ -91,12 +92,19 @@ public class FilmService {
         }
     }
 
-    public List<Film> getListPopularFilms(Integer count) {
+    public List<Film> getListPopularFilms(Integer count, Integer genreId, Integer year) {
         return likesStorage.getTopFilmLikes()
                 .stream()
                 .limit(count)
                 .map(this::getFilmById)
                 .collect(Collectors.toList());
+    }
+
+
+    public List<Film> getTopPopularFilms(Integer count, Integer genreId, Integer year) {
+        return likesStorage.getPopularsFilms(count, genreId, year);
+
+
     }
 
     private boolean containsUser(Long id) {
