@@ -29,13 +29,6 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
-    @DeleteMapping
-    public void deleteFilm(@PathVariable Long id) {
-        log.info("Удаление фильма " + id + "...");
-        filmService.deleteFilm(id);
-        log.info("Фильм удален");
-    }
-
     @GetMapping
     public Collection<Film> getAllFilms() {
         log.info("Вызов списка всех фильмов.");
@@ -68,6 +61,13 @@ public class FilmController {
                                           @RequestParam(value = "year", required = false) Integer year) {
         log.info("Вызов списка популярных фильмов...");
         return filmService.getTopPopularFilms(count, genreId, year);
+    }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilmById(@PathVariable Long filmId) {
+        log.info("Удаление фильма по id:" + filmId + "...");
+        filmService.deleteFilm(filmId);
+        log.info("Фильм удален");
     }
 
 }
