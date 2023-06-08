@@ -185,11 +185,10 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year) {
         if (genreId == null && year == null) {
-            String sql = "SELECT f.*, MPARatings.ratingName COUNT(l.userId) " +
+            String sql = "SELECT f.*, MPARatings.ratingName, COUNT(l.userId) " +
                     "FROM films AS f " +
-                    "LEFT OUTER JOIN filmLikes AS l " +
-                    "JOIN MPARatings ON MPARatings.ratingMPAId = films.ratingMPAId\n" +
-                    "ON l.filmId = f.id " +
+                    "LEFT JOIN filmLikes AS l ON l.filmId = f.id " +
+                    "JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId " +
                     "GROUP BY f.id " +
                     "ORDER BY COUNT(l.userId) DESC " +
                     "LIMIT ?";
@@ -197,37 +196,37 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         if (genreId != null && year != null) {
-            String sql = "SELECT f.*, MPARatings.ratingName FROM films f\n" +
-                    "LEFT JOIN genre g on f.id = g.filmId\n" +
-                    "JOIN MPARatings ON MPARatings.ratingMPAId = films.ratingMPAId\n" +
-                    "LEFT OUTER JOIN filmLikes l ON l.filmId = f.id\n" +
+            String sql = "SELECT f.*, MPARatings.ratingName FROM films f " +
+                    "LEFT JOIN genre g ON f.id = g.filmId " +
+                    "JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId " +
+                    "LEFT JOIN filmLikes l ON l.filmId = f.id " +
                     "WHERE g.genreId = ? AND YEAR(f.releaseDate) = ? " +
                     "GROUP BY f.id " +
-                    "ORDER BY COUNT(l.userId) DESC\n" +
-                    "LIMIT ? ";
+                    "ORDER BY COUNT(l.userId) DESC " +
+                    "LIMIT ?";
             return ((List<Film>) jdbcTemplate.query(sql, this::rowMapFilm, genreId, year, count));
         }
 
         if (genreId == null) {
-            String sql = "SELECT f.*, MPARatings.ratingName FROM films f\n" +
-                    "LEFT JOIN genre g on f.id = g.filmId\n" +
-                    "JOIN MPARatings ON MPARatings.ratingMPAId = films.ratingMPAId\n" +
-                    "LEFT OUTER JOIN filmLikes l ON l.filmId = f.id\n" +
+            String sql = "SELECT f.*, MPARatings.ratingName FROM films f " +
+                    "LEFT JOIN genre g on f.id = g.filmId " +
+                    "JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId " +
+                    "LEFT JOIN filmLikes l ON l.filmId = f.id " +
                     "WHERE YEAR(f.releaseDate) = ? " +
                     "GROUP BY f.id " +
-                    "ORDER BY COUNT(l.userId) DESC\n" +
-                    "LIMIT ? ";
+                    "ORDER BY COUNT(l.userId) DESC " +
+                    "LIMIT ?";
             return ((List<Film>) jdbcTemplate.query(sql, this::rowMapFilm, year, count));
         }
 
-        String sql = "SELECT f.*, MPARatings.ratingName FROM films f\n" +
-                "LEFT JOIN genre g on f.id = g.filmId\n" +
-                "JOIN MPARatings ON MPARatings.ratingMPAId = films.ratingMPAId\n" +
-                "LEFT OUTER JOIN filmLikes l ON l.filmId = f.id\n" +
+        String sql = "SELECT f.*, MPARatings.ratingName FROM films f " +
+                "LEFT JOIN genre g on f.id = g.filmId " +
+                "JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId " +
+                "LEFT JOIN filmLikes l ON l.filmId = f.id " +
                 "WHERE g.genreId = ? " +
                 "GROUP BY f.id " +
-                "ORDER BY COUNT(l.userId) DESC\n" +
-                "LIMIT ? ";
+                "ORDER BY COUNT(l.userId) DESC " +
+                "LIMIT ?";
         return ((List<Film>) jdbcTemplate.query(sql, this::rowMapFilm, genreId, count));
     }
 
