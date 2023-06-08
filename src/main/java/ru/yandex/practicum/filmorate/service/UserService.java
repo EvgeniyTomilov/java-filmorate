@@ -10,10 +10,13 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @Slf4j
 public class UserService {
+    private Set<Long> friends = new HashSet<>();
 
     @Autowired
     @Qualifier(value = "userDbStorage")
@@ -33,10 +36,21 @@ public class UserService {
 
     public void deleteUser(Long id) {
         if (contains(id)) {
+            getAllUsers()
+                    .stream()
+                    .forEach(user -> {
+                        deleteFriend(user.getId(), id);
+                        userStorage.getCommonFriends(id, user.getId())
+                                .stream()
+                                .forEach(userCommon -> {
+                                    deleteFriend(userCommon.getId(), id);
+                                });
+                    });
             userStorage.delete(id);
+        } else {
+            log.info("User с id " + id + " не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        log.info("User с id " + id + " не найден");
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<User> getAllUsers() {
