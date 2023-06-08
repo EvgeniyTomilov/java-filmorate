@@ -7,10 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -76,5 +73,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
 
+    @Override
+    public List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year) {
+        return null;
+    }
 }
 

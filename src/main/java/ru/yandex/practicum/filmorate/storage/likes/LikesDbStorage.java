@@ -6,9 +6,12 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 
-import java.util.*;
+import java.sql.ResultSet;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component("LikesDbStorage")
@@ -16,7 +19,6 @@ import java.util.*;
 public class LikesDbStorage implements LikesStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final FilmDbStorage filmDbStorage;
 
 
     @Override
@@ -70,34 +72,14 @@ public class LikesDbStorage implements LikesStorage {
                         "ORDER BY (COALESCE(t.RATE, 0) + COALESCE(cn.count, 0)) desc";
         return new LinkedHashSet<>(jdbcTemplate.queryForList(sqlQueryTopFilmLikes, Long.class));
     }
-
-    @Override
-
-    //вывод популярного фильма по годам и режиссеру
-    public List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year) {
-        String sqlPopularsFilms = "SELECT* FROM films f " +
-                "LEFT JOIN filmLikes l ON f.id = l.filmId " +
-                "LEFT JOIN genre g ON f.id = g.filmId " +
-                "WHERE 1 = 1 ";
-
-        List<Object> parameters = new ArrayList<>();
-        if (genreId != null) {
-            sqlPopularsFilms += "AND g.genreId = ? ";
-            parameters.add(genreId);
-        }
-        if (year != null) {
-            sqlPopularsFilms += "AND YEAR(f.releaseDate) = ? ";
-            parameters.add(year);
-        }
-        sqlPopularsFilms += "GROUP BY f.id " +
-                "ORDER BY COUNT(l.userId) DESC " +
-                "LIMIT ?";
-
-        parameters.add(count);
-
-        List<Film> films = jdbcTemplate.query(sqlPopularsFilms, (rs, rowNum) -> filmDbStorage.rowMapFilm(rs), parameters.toArray());
-        return films;
-
-    }
-
 }
+
+
+//вывод популярного фильма по годам и жанру
+
+
+
+
+
+
+

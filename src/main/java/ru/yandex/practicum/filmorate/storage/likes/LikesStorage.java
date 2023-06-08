@@ -1,8 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.likes;
 
-import ru.yandex.practicum.filmorate.model.Film;
-
-import java.util.List;
 import java.util.Set;
 
 public interface LikesStorage {
@@ -16,8 +13,10 @@ public interface LikesStorage {
 
     void addLike(Long id, Long userId);
 
+
     //вывод популярного фильма по годам и режиссеру
-    List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year);
+    //List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year);
+    //Collection<Film> getPopularsFilms(int count);
 
 
 }

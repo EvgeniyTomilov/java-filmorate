@@ -100,12 +100,18 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-
     public List<Film> getTopPopularFilms(Integer count, Integer genreId, Integer year) {
-        return likesStorage.getPopularsFilms(count, genreId, year);
-
-
+        return filmStorage.getPopularsFilms(count, genreId, year);
     }
+
+
+
+
+   /* public Collection<Film> getListOfTopFilms(int count) {
+        return likesStorage.getPopularsFilms(count);
+    }
+
+    */
 
     private boolean containsUser(Long id) {
         return userStorage.getUsersMap().containsKey(id);
