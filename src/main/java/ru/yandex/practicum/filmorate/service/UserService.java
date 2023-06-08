@@ -47,8 +47,10 @@ public class UserService {
                                 });
                     });
             userStorage.delete(id);
+        } else {
+            log.info("User с id " + id + " не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        log.info("User с id " + id + " не найден");
     }
 
     public Collection<User> getAllUsers() {
