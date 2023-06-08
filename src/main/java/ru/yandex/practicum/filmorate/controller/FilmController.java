@@ -30,13 +30,6 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
-    @DeleteMapping
-    public void deleteFilm(@PathVariable Long id) {
-        log.info("Удаление фильма " + id + "...");
-        filmService.deleteFilm(id);
-        log.info("Фильм удален");
-    }
-
     @GetMapping
     public Collection<Film> getAllFilms() {
         log.info("Вызов списка всех фильмов.");
@@ -67,6 +60,13 @@ public class FilmController {
     public List<Film> getListPopularFilms(@RequestParam(value = "count", required = false, defaultValue = "10") Integer count) {
         log.info("Вызов списка популярных фильмов...");
         return filmService.getListPopularFilms(count);
+    }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilmById(@PathVariable Long filmId) {
+        log.info("Удаление фильма по id:" + filmId + "...");
+        filmService.deleteFilm(filmId);
+        log.info("Фильм удален");
     }
     @GetMapping("/search")
     public List<Film> searchFilms (@RequestParam @NotBlank String query,

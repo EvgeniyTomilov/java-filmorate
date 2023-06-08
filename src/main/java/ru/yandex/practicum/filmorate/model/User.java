@@ -41,6 +41,8 @@ public class User {
     }
 
     public void removeFriend(Long friendId) {
-        this.friends.remove(friendId);
+        if (this.friends != null) {
+            this.friends.remove(friendId);
+        }
     }
 }

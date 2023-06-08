@@ -28,13 +28,6 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    @DeleteMapping
-    public void deleteUser(@PathVariable Long id) {
-        log.info("Удаление пользователя...");
-        userService.deleteUser(id);
-        log.info("Пользователь удален");
-    }
-
     @GetMapping
     public Collection<User> getAllUsers() {
         log.info("Вызов всех пользователей...");
@@ -72,5 +65,12 @@ public class UserController {
     public Collection<User> getListSharedFriends(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
         log.info("Вызов взаимных друзей пользователя " + id + " и пользователя " + userId + "...");
         return userService.getListSharedFriends(id, userId);
+    }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable Long userId) {
+        log.info("Удаление пользователя по id:" + userId + "...");
+        userService.deleteUser(userId);
+        log.info("Пользователь удален");
     }
 }
