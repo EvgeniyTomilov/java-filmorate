@@ -110,7 +110,7 @@ public class FilmService {
         return filmStorage.getById(id).isPresent();
     }
 
-    public List<Film> getDirectorFilms(int id, String sortBy) {
+    public List<Film> getDirectorFilms(Long id, String sortBy) {
         directorService.getDirectorById(id);
         switch (sortBy) {
             case "year":

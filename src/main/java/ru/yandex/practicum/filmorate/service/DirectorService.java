@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.error.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class DirectorService {
 
     private final DirectorStorage directorStorage;
 
-    public Director getDirectorById(int id) {
+    public Director getDirectorById(Long id) {
         Optional<Director> director = Optional.ofNullable(directorStorage.getDirectorById(id));
         if (director.isPresent()) {
             log.debug("Получить режиссера", director.get());
@@ -27,12 +28,12 @@ public class DirectorService {
         }
     }
 
-    public List<Director> getFilmDirectorsById(int id) {
+    public List<Director> getFilmDirectorsById(Long id) {
         return directorStorage.getDirectorsByFilmId(id);
-  }
+    }
 
     public Director createDirector(Director director) {
-        int id = directorStorage.createDirector(director);
+        Long id = directorStorage.createDirector(director);
         return getDirectorById(id);
     }
 
@@ -43,13 +44,25 @@ public class DirectorService {
         return getDirectorById(director.getId());
     }
 
-    public void deleteDirector(int id) {
+    public void deleteDirector(Long id) {
         directorStorage.deleteDirector(id);
     }
 
     public List<Director> getAllDirectors() {
         List<Director> directors = directorStorage.getAllDirectors();
-        log.debug("Получить список режиссеров" , directors.size());
+        log.debug("Получить список режиссеров", directors.size());
         return directors;
+    }
+
+    public void setDirectorInDB(Long filmID, List<Director> directors) {
+        directorStorage.setDirectorInDB(filmID, directors);
+    }
+
+    public void setDirectorsListFilmsDB(List<Film> films) {
+        directorStorage.setDirectorsListFilmsDB(films);
+    }
+
+    public List<Director> findDirectorByFilm(Long filmID) {
+        return directorStorage.findDirectorByFilm(filmID);
     }
 }

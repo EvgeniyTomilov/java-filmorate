@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface FilmStorage extends Storage<Film> {
 
-    List<Film> getFilmsSortedByYears(int directorId);
+    List<Film> getFilmsSortedByYears(Long directorId);
 
-    List<Film> getFilmsSortedByLikes(int directorId);
+    List<Film> getFilmsSortedByLikes(Long directorId);
 }

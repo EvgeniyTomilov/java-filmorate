@@ -15,7 +15,7 @@ import javax.validation.constraints.PositiveOrZero;
 public class Director {
 
     @PositiveOrZero
-    int id;
+    Long id;
     @NotBlank(message = "Имя режиссера не может быть пустым")
     private String name;
 }
