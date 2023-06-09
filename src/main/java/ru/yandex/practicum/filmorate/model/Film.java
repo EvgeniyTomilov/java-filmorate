@@ -10,6 +10,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 @Data
 @Builder
@@ -35,4 +36,5 @@ public class Film {
     private int rate;
 
     private LinkedHashSet<Genre> genres;
+    private List<Director> directors;
 }
