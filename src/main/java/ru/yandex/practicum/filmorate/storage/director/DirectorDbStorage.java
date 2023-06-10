@@ -73,19 +73,19 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public void updateDirector(Director director) {
         Long id = director.getId();
-        isExist(id);
+        checkExist(id);
         String sqlQuery = "UPDATE DIRECTORS SET name = ? WHERE id = ?;";
         jdbcTemplate.update(sqlQuery, director.getName(), director.getId());
     }
 
     @Override
     public void deleteDirector(Long id) {
-        isExist(id);
+        checkExist(id);
         String sqlQuery = "DELETE FROM directors WHERE id = ?;";
         jdbcTemplate.update(sqlQuery, id);
     }
 
-    public void isExist(Long directorId) {
+    public void checkExist(Long directorId) {
         final String checkUserQuery = "SELECT * FROM directors WHERE id = ?";
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(checkUserQuery, directorId);
         if (!userRows.next()) {
@@ -162,5 +162,3 @@ public class DirectorDbStorage implements DirectorStorage {
         return jdbcTemplate.query(sqlQuery, this::rowMapToDirector, filmID);
     }
 }
-
-
