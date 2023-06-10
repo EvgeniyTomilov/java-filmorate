@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -70,6 +71,11 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public Map<Long, User> getUsersMap() {
         return userHashMap;
+    }
+
+    @Override
+    public Collection<Film> getRecommendations(Long id) {
+        return null;
     }
 
     @Override
