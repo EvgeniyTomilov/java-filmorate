@@ -215,6 +215,8 @@ public class FilmDbStorage implements FilmStorage {
                     "FROM films AS f " +
                     "LEFT JOIN filmLikes AS l ON l.filmId = f.id " +
                     "LEFT JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId\n" +
+                    "LEFT JOIN films_directors AS fd ON fd.film_id  = f.id " +
+                    "LEFT JOIN directors AS d ON d.id  = fd.director_id " +
                     "GROUP BY f.id " +
                     "ORDER BY COUNT(l.userId) DESC " +
                     "LIMIT ?";
@@ -226,6 +228,8 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN genre g on f.id = g.filmId\n" +
                     "LEFT JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId\n" +
                     "LEFT JOIN filmLikes l ON l.filmId = f.id\n" +
+                    "LEFT JOIN films_directors AS fd ON fd.film_id  = f.id " +
+                    "LEFT JOIN directors AS d ON d.id  = fd.director_id " +
                     "WHERE g.genreId = ? AND YEAR(f.releaseDate) = ? " +
                     "GROUP BY f.id " +
                     "ORDER BY COUNT(l.userId) DESC\n" +
@@ -238,6 +242,8 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN genre g on f.id = g.filmId\n" +
                     "LEFT JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId\n" +
                     "LEFT JOIN filmLikes l ON l.filmId = f.id\n" +
+                    "LEFT JOIN films_directors AS fd ON fd.film_id  = f.id " +
+                    "LEFT JOIN directors AS d ON d.id  = fd.director_id " +
                     "WHERE YEAR(f.releaseDate) = ? " +
                     "GROUP BY f.id " +
                     "ORDER BY COUNT(l.userId) DESC\n" +
@@ -249,15 +255,14 @@ public class FilmDbStorage implements FilmStorage {
                 "LEFT JOIN genre g on f.id = g.filmId\n" +
                 "LEFT JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId\n" +
                 "LEFT JOIN filmLikes l ON l.filmId = f.id\n" +
+                "LEFT JOIN films_directors AS fd ON fd.film_id  = f.id " +
+                "LEFT JOIN directors AS d ON d.id  = fd.director_id " +
                 "WHERE g.genreId = ? " +
                 "GROUP BY f.id " +
                 "ORDER BY COUNT(l.userId) DESC\n" +
                 "LIMIT ? ";
         return jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, count);
     }
-
-
-
 
     @Override
     public List<Film> getFilmsSortedByYears(Long id) {
