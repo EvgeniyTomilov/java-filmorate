@@ -28,6 +28,7 @@ public class FilmService {
     private UserStorage userStorage;
     private final LikesStorage likesStorage;
     private final DirectorService directorService;
+    private static final String FILM_NOT_FOUND = "Фильм не найден № ";
 
     public FilmService(LikesStorage likesStorage, DirectorService directorService) {
         this.likesStorage = likesStorage;
@@ -42,7 +43,7 @@ public class FilmService {
         if (containsFilm(film.getId())) {
             return filmStorage.update(film).get();
         }
-        log.info("Фильм " + film.getId() + " не найден");
+        log.info(FILM_NOT_FOUND + film.getId());
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -50,7 +51,7 @@ public class FilmService {
         if (containsFilm(id)) {
             return filmStorage.getById(id).get();
         }
-        log.info("Фильм " + id + " не найден");
+        log.info(FILM_NOT_FOUND + id);
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -58,7 +59,7 @@ public class FilmService {
         if (containsFilm(id)) {
             filmStorage.delete(id);
         }
-        log.info("Фильм " + id + " не найден");
+        log.info(FILM_NOT_FOUND + id);
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -75,7 +76,7 @@ public class FilmService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         } else {
-            log.info("Фильм " + id + " не найден");
+            log.info(FILM_NOT_FOUND + id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -89,7 +90,7 @@ public class FilmService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         } else {
-            log.info("Фильм " + id + " не найден");
+            log.info(FILM_NOT_FOUND + id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -111,7 +112,9 @@ public class FilmService {
     }
 
     public List<Film> getDirectorFilms(Long id, String sortBy) {
-        directorService.getDirectorById(id);
+        if (directorService.getFilmDirectorsById(id).isEmpty()) {
+            throw new ObjectNotFoundException("Режиссер у фильма не указан ");
+        }
         switch (sortBy) {
             case "year":
                 List<Film> films = filmStorage.getFilmsSortedByYears(id);
@@ -124,3 +127,4 @@ public class FilmService {
         }
     }
 }
+
