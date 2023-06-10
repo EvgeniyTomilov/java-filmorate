@@ -62,9 +62,6 @@ public class FilmService {
             log.info("Фильм " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
-        log.info(FILM_NOT_FOUND + id);
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<Film> getAllFilms() {
