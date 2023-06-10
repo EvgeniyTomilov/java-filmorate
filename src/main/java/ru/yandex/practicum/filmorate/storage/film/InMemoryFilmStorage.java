@@ -1,5 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.film;
-
+/*
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -72,10 +72,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         return filmHashMap.containsKey(id);
     }
 
-
     @Override
-    public List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year) {
+    public List<Film> getFilmsSortedByYears(int directorId) {
         return null;
     }
-}
 
+    @Override
+    public List<Film> getFilmsSortedByLikes(int directorId) {
+        return null;
+    }
+}*/
