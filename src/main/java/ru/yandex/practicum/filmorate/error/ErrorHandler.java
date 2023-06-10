@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.error.exception.ObjectNotFoundException;
+
 import javax.validation.ValidationException;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -29,6 +31,13 @@ public class ErrorHandler {
                 "error", "искомый объект не найден",
                 "errorMessage", e.getMessage()
         );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleObjectNotFoundException(final ObjectNotFoundException e) {
+        log.debug("Объект не найден", e.getMessage(), e);
+        return new ErrorResponse("404", e.getMessage());
     }
 
     @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})

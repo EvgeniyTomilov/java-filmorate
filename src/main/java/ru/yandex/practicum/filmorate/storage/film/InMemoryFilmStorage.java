@@ -1,5 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.film;
-
+/*
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -7,10 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -74,4 +71,14 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Boolean contains(Long id) {
         return filmHashMap.containsKey(id);
     }
-}
+
+    @Override
+    public List<Film> getFilmsSortedByYears(int directorId) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getFilmsSortedByLikes(int directorId) {
+        return null;
+    }
+}*/
