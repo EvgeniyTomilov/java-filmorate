@@ -1,7 +1,9 @@
 DROP TABLE IF EXISTS REVIEW_LIKES;
 DROP TABLE IF EXISTS REVIEWS;
 DROP TABLE IF EXISTS users;
---DROP TABLE IF EXISTS films;
+DROP TABLE IF EXISTS directors;
+DROP TABLE IF EXISTS films_directors;
+DROP TABLE IF EXISTS films;
 DROP TABLE IF EXISTS genreNames;
 DROP TABLE IF EXISTS genre;
 DROP TABLE IF EXISTS MPARatings;
@@ -81,10 +83,10 @@ create unique index if not exists USER_LOGIN_UINDEX on USERS (login);
 create table if not exists REVIEWS
 (
     REVIEW_ID   LONG auto_increment,
-    FILM_ID     LONG           not null,
-    USER_ID     LONG           not null,
+    FILM_ID     LONG    not null,
+    USER_ID     LONG    not null,
     CONTENT     CHARACTER VARYING,
-    IS_POSITIVE BOOLEAN           not null,
+    IS_POSITIVE BOOLEAN not null,
     constraint REVIEWS_PK
         primary key (REVIEW_ID),
     constraint REVIEWS_FILMS_ID_FK
@@ -97,7 +99,7 @@ create table if not exists REVIEW_LIKES
 (
     REVIEW_ID INTEGER not null,
     USER_ID   INTEGER not null,
-    ISLIKE INTEGER not null,
+    ISLIKE    INTEGER not null,
     constraint REVIEW_LIKES_PK
         primary key (REVIEW_ID),
     constraint "review_likes_REVIEWS_REVIEW_ID_fk"
@@ -106,4 +108,3 @@ create table if not exists REVIEW_LIKES
     constraint "review_likes_USERS_ID_fk"
         foreign key (USER_ID) references USERS
 );
-
