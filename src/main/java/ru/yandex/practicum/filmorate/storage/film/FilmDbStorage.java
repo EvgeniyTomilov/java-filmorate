@@ -10,10 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.DirectorService;
-import ru.yandex.practicum.filmorate.storage.genres.GenresDbStorage;
 import ru.yandex.practicum.filmorate.storage.genres.GenresStorage;
-import ru.yandex.practicum.filmorate.storage.rating.RatingDbStorage;
-import ru.yandex.practicum.filmorate.storage.rating.RatingStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -83,7 +80,7 @@ public class FilmDbStorage implements FilmStorage {
         }
         log.info("В базе данных найден фильм: {}", films.get(0));
         Film film = films.get(0);
-        film.setDirectors(directorService.findDirectorByFilm(film.getId()));
+        film.setDirectors((directorService.findDirectorByFilm(film.getId())));
         if (film.getDirectors() == null) {
             film.setDirectors(new ArrayList<>());
         }
@@ -210,6 +207,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year) {
+        List<Film> films;
         if (genreId == null && year == null) {
             String sql = "SELECT f.*, MPARatings.ratingName, COUNT(l.userId) " +
                     "FROM films AS f " +
@@ -220,7 +218,10 @@ public class FilmDbStorage implements FilmStorage {
                     "GROUP BY f.id " +
                     "ORDER BY COUNT(l.userId) DESC " +
                     "LIMIT ?";
-            return jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), count);
+
+            films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), count);
+            directorService.setDirectorsListFilmsDB(films);
+            return films;
         }
 
         if (genreId != null && year != null) {
@@ -234,7 +235,9 @@ public class FilmDbStorage implements FilmStorage {
                     "GROUP BY f.id " +
                     "ORDER BY COUNT(l.userId) DESC\n" +
                     "LIMIT ? ";
-            return jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, year, count);
+            films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, year, count);
+            directorService.setDirectorsListFilmsDB(films);
+            return films;
         }
 
         if (genreId == null) {
@@ -248,7 +251,9 @@ public class FilmDbStorage implements FilmStorage {
                     "GROUP BY f.id " +
                     "ORDER BY COUNT(l.userId) DESC\n" +
                     "LIMIT ? ";
-            return jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), year, count);
+            films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), year, count);
+            directorService.setDirectorsListFilmsDB(films);
+            return films;
         }
 
         String sql = "SELECT f.*, MPARatings.ratingName FROM films f\n" +
@@ -261,7 +266,9 @@ public class FilmDbStorage implements FilmStorage {
                 "GROUP BY f.id " +
                 "ORDER BY COUNT(l.userId) DESC\n" +
                 "LIMIT ? ";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, count);
+        films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, count);
+        directorService.setDirectorsListFilmsDB(films);
+        return films;
     }
 
     @Override

@@ -47,9 +47,6 @@ CREATE TABLE IF NOT EXISTS MPARatings
 (
     ratingMPAId INTEGER PRIMARY KEY AUTO_INCREMENT,
     ratingname  VARCHAR
-CREATE TABLE IF NOT EXISTS MPARatings(
-        ratingMPAId INTEGER PRIMARY KEY AUTO_INCREMENT,
-        ratingName VARCHAR
 );
 
 CREATE TABLE IF NOT EXISTS filmLikes
@@ -111,3 +108,4 @@ create table if not exists REVIEW_LIKES
     constraint "review_likes_USERS_ID_fk"
         foreign key (USER_ID) references USERS
 );
+
