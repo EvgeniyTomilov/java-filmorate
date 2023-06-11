@@ -235,7 +235,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Film getRowMapFilms(ResultSet rs) throws SQLException {
-
         Long id = rs.getLong("id");
         Film film = Film.builder()
                 .name(rs.getString("name"))
@@ -244,11 +243,11 @@ public class FilmDbStorage implements FilmStorage {
                 .duration(rs.getInt("duration"))
                 .mpa(MPA.builder()
                         .id(rs.getInt("ratingMPAId"))
+                        .name(String.valueOf(ratingStorage.getNameMpa(rs.getInt("ratingMPAId"))))
                         .build())
                 .genres(getGenresOfFilm(id))
                 .build();
         film.setId(id);
-        film.getMpa();
         return film;
     }
-    }
+}
