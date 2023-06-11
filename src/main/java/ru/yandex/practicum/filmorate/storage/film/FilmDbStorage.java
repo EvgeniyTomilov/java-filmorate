@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.storage.genres.GenresStorage;
+import ru.yandex.practicum.filmorate.storage.rating.RatingDbStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -31,6 +32,7 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenresStorage genreStorage;
     private final DirectorService directorService;
+    private final RatingDbStorage ratingStorage;
 
     private Film rowMapFilm(ResultSet rs) throws SQLException {
         Long filmId = rs.getLong("id");
@@ -190,6 +192,11 @@ public class FilmDbStorage implements FilmStorage {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    private String getNameMpaOfFilm(Long ratingId) {
+        String sqlQueryGetMpaName = "SELECT RATINGNAME FROM MPARatings  WHERE RATINGMPAID = ?";
+        return String.valueOf(jdbcTemplate.queryForObject(sqlQueryGetMpaName, Integer.class, ratingId));
+    }
+
     @Override
     public List<Film> getFilmsSortedByYears(Long id) {
         String sqlQueryGetSortedByYear = "SELECT * FROM films join MPARatings on films.ratingMPAId = MPARatings.ratingMPAId AND films.id in" +
@@ -215,4 +222,33 @@ public class FilmDbStorage implements FilmStorage {
         directorService.setDirectorsListFilmsDB(films);
         return films;
     }
-}
+
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        String sqlQuery = "SELECT f.*, count(fl.USERID) AS top FROM FILMLIKES AS fl " +
+                "JOIN FILMS AS f ON f.ID = fl.FILMID " +
+                "WHERE fl.USERID  in (?, ?) " +
+                "GROUP BY fl.FILMID " +
+                "HAVING COUNT(fl.USERID) > 1;";
+        List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> getRowMapFilms(rs), userId, friendId);
+        return films;
+    }
+
+    private Film getRowMapFilms(ResultSet rs) throws SQLException {
+
+        Long id = rs.getLong("id");
+        Film film = Film.builder()
+                .name(rs.getString("name"))
+                .description(rs.getString("description"))
+                .releaseDate(rs.getDate("releaseDate").toLocalDate())
+                .duration(rs.getInt("duration"))
+                .mpa(MPA.builder()
+                        .id(rs.getInt("ratingMPAId"))
+                        .build())
+                .genres(getGenresOfFilm(id))
+                .build();
+        film.setId(id);
+        film.getMpa();
+        return film;
+    }
+    }

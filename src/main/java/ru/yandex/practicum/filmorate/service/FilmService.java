@@ -127,5 +127,9 @@ public class FilmService {
                 throw new ObjectNotFoundException("Задан не корректный параметр сортировки");
         }
     }
+
+    public List<Film> getFriendsCommonFilms(Long userId, Long friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
 }
 
