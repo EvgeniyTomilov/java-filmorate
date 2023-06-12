@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.error.exception.InvalidSearchParameters;
+import ru.yandex.practicum.filmorate.error.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -27,9 +28,12 @@ public class FilmService {
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
     private final LikesStorage likesStorage;
+    private final DirectorService directorService;
+    private static final String FILM_NOT_FOUND = "Фильм не найден № ";
 
-    public FilmService(LikesStorage likesStorage) {
+    public FilmService(LikesStorage likesStorage, DirectorService directorService) {
         this.likesStorage = likesStorage;
+        this.directorService = directorService;
     }
 
     public Film addFilm(Film film) {
@@ -40,7 +44,7 @@ public class FilmService {
         if (containsFilm(film.getId())) {
             return filmStorage.update(film).get();
         }
-        log.info("Фильм " + film.getId() + " не найден");
+        log.info(FILM_NOT_FOUND + film.getId());
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -48,7 +52,7 @@ public class FilmService {
         if (containsFilm(id)) {
             return filmStorage.getById(id).get();
         }
-        log.info("Фильм " + id + " не найден");
+        log.info(FILM_NOT_FOUND + id);
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
@@ -59,6 +63,9 @@ public class FilmService {
             log.info("Фильм " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+
+        log.info(FILM_NOT_FOUND + id);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<Film> getAllFilms() {
@@ -74,7 +81,7 @@ public class FilmService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         } else {
-            log.info("Фильм " + id + " не найден");
+            log.info(FILM_NOT_FOUND + id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -88,7 +95,7 @@ public class FilmService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         } else {
-            log.info("Фильм " + id + " не найден");
+            log.info(FILM_NOT_FOUND + id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -109,6 +116,22 @@ public class FilmService {
         return filmStorage.getById(id).isPresent();
     }
 
+    public List<Film> getDirectorFilms(Long id, String sortBy) {
+        if (directorService.getFilmDirectorsById(id).isEmpty()) {
+            throw new ObjectNotFoundException("Режиссер у фильма не указан ");
+        }
+        switch (sortBy) {
+            case "year":
+                List<Film> films = filmStorage.getFilmsSortedByYears(id);
+                return films;
+            case "likes":
+                films = filmStorage.getFilmsSortedByLikes(id);
+                return films;
+            default:
+                throw new ObjectNotFoundException("Задан не корректный параметр сортировки");
+        }
+    }
+
     public List<Film> searchFilms(String query, String[] searchParameters) {
         if (query == null || searchParameters == null || searchParameters.length > 2) {
             throw new InvalidSearchParameters("В параметры поиска ошибка.");
@@ -120,3 +143,5 @@ public class FilmService {
         return findFilms;
     }
 }
+
+
