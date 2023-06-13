@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Film;
 
+import java.sql.ResultSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.Set;
 public class LikesDbStorage implements LikesStorage {
 
     private final JdbcTemplate jdbcTemplate;
+
 
     @Override
     public Set<Integer> getLikesByFilmId(Long filmId) {
@@ -45,6 +48,7 @@ public class LikesDbStorage implements LikesStorage {
                 userId);
     }
 
+
     @Override
     public Integer getAmountOfLikes(Long filmId, Long userId) {
         int amount = 0;
@@ -59,6 +63,7 @@ public class LikesDbStorage implements LikesStorage {
         return amount;
     }
 
+
     @Override
     public Set<Long> getTopFilmLikes() {
         String sqlQueryTopFilmLikes =
@@ -68,3 +73,13 @@ public class LikesDbStorage implements LikesStorage {
         return new LinkedHashSet<>(jdbcTemplate.queryForList(sqlQueryTopFilmLikes, Long.class));
     }
 }
+
+
+//вывод популярного фильма по годам и жанру
+
+
+
+
+
+
+

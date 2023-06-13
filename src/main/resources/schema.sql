@@ -108,3 +108,4 @@ create table if not exists REVIEW_LIKES
     constraint "review_likes_USERS_ID_fk"
         foreign key (USER_ID) references USERS
 );
+
