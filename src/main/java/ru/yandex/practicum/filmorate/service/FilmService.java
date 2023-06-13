@@ -135,7 +135,7 @@ public class FilmService {
 
     public List<Film> searchFilms(String query, String[] searchParameters) {
         if (query == null || searchParameters == null || searchParameters.length > 2) {
-            throw new InvalidSearchParameters("В параметры поиска ошибка.");
+            throw new InvalidSearchParameters("В параметрах поиска ошибка.");
         }
         log.info("Service.searchFilms: {} - query, {} - by", query, searchParameters);
         List<Film> findFilms = filmStorage.searchFilms(query, searchParameters);

@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -40,8 +41,14 @@ public class FilmDbStorage implements FilmStorage {
                 .id(rs.getInt("genreid"))
                 .name(rs.getString("genre"))
                 .build();
-        HashSet<Genre> genres = new LinkedHashSet<>();
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
         genres.add(genre);
+        Director director =Director.builder()//
+                .id(rs.getLong("director_id"))//
+                .name(rs.getString("name"))//
+                .build();//
+        List<Director> directors = new ArrayList<>();//
+        directors.add(director);//
         Film film = Film.builder()
                 .name(rs.getString("name"))
                 .description(rs.getString("description"))
@@ -280,22 +287,22 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> searchFilms(String query, String[] searchParameters) {
         String queryByOneParam = searchParameters[0].equals("title") ?
                 " lower(film.name) like lower('%" + query + "%')" :
-                " lower(d.name) like lower('%" + query + "%')"; //
+                " lower(d.name) like lower('%" + query + "%')";
         String queryByTwoParams = searchParameters.length == 2 ?
-                "or lower(name) like lower('%" + query + "%')" : "";// изменить по факту имя директора name
+                "or lower(name) like lower('%" + query + "%')" : "";
 
         String sqlQuery = "SELECT film.id, film.name, film.description, film.releasedate, film.duration, " +
-                "MPARatings.ratingMPAId, MPARatings.ratingname" +// добавить все поля для фильма
-                "count(likes.userid) as usersLikes, names.genre, names.genreid, fd.director_id, d.name " +//fd.director_id, d.name
+                "MPARatings.ratingMPAId, MPARatings.ratingname" +
+                "count(likes.userid) as usersLikes, names.genre, names.genreid, fd.director_id, d.name " +
                 "FROM films film " +
                 "JOIN MPARatings on films.ratingMPAId = MPARatings.ratingMPAId " +
                 "JOIN genre genre on film.id = genre.filmid " +
                 "JOIN genrenames names on genre.genreid = names.genreid " +
-                "JOIN film_directors as fd on film.film_id = fd.film_id " +// JOIN film_directors as fd on film.film_id = fd.film_id
-                "JOIN directors d ON d.id = fd.director_id " + //JOIN directors d ON d.id = fd.director_id
+                "JOIN film_directors as fd on film.film_id = fd.film_id " +
+                "JOIN directors as d ON d.id = fd.director_id " +
                 "WHERE " + queryByOneParam + queryByTwoParams +
                 " GROUP BY film.id, names.genreid " +
                 "ORDER BY usersLikes desc";
-        return jdbcTemplate.query(sqlQuery,this::rowMapFilms); //  дописать после добавления фичи режисера
+        return jdbcTemplate.query(sqlQuery, this::rowMapFilms);
     }
 }
