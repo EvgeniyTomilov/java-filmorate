@@ -17,6 +17,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
 @Slf4j
 public class FilmService {
@@ -97,13 +98,26 @@ public class FilmService {
         }
     }
 
-    public List<Film> getListPopularFilms(Integer count) {
+    public List<Film> getListPopularFilms(Integer count, Integer genreId, Integer year) {
         return likesStorage.getTopFilmLikes()
                 .stream()
                 .limit(count)
                 .map(this::getFilmById)
                 .collect(Collectors.toList());
     }
+
+    public List<Film> getTopPopularFilms(Integer count, Integer genreId, Integer year) {
+        return filmStorage.getPopularsFilms(count, genreId, year);
+    }
+
+
+
+
+   /* public Collection<Film> getListOfTopFilms(int count) {
+        return likesStorage.getPopularsFilms(count);
+    }
+
+    */
 
     private boolean containsUser(Long id) {
         return userStorage.getUsersMap().containsKey(id);

@@ -25,10 +25,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
-    public static final String GET_ALL_QUERY =
-            "SELECT * FROM films join MPARatings on films.ratingMPAId = MPARatings.ratingMPAId";
-    public static final String GET_BY_ID_QUERY =
-            "SELECT * FROM films join MPARatings on films.ratingMPAId = MPARatings.ratingMPAId WHERE id = ?";
+
+    public static final String GET_ALL_QUERY = "SELECT * FROM films f join MPARatings on f.ratingMPAId = MPARatings.ratingMPAId";
+    public static final String GET_BY_ID_QUERY = "SELECT * FROM films f join MPARatings on f.ratingMPAId = MPARatings.ratingMPAId WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final GenresStorage genreStorage;
@@ -66,6 +65,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Film rowMapFilm(ResultSet rs) throws SQLException {
+
+    public Film rowMapFilm(ResultSet rs) throws SQLException {
         Long filmId = rs.getLong("id");
         Film film = Film.builder()
                 .name(rs.getString("name"))
@@ -74,7 +75,7 @@ public class FilmDbStorage implements FilmStorage {
                 .duration(rs.getInt("duration"))
                 .mpa(MPA.builder()
                         .id(rs.getInt("ratingMPAId"))
-                        .name(rs.getString("RATINGNAME"))
+                        .name(rs.getString("ratingName"))
                         .build())
                 .genres(getGenresOfFilm(filmId))
                 .build();
@@ -82,12 +83,27 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
+    public Film rowMapFilm1(ResultSet rs) throws SQLException {
+        Long filmId = rs.getLong("id");
+        Film film = Film.builder()
+                .name(rs.getString("name"))
+                .description(rs.getString("description"))
+                .releaseDate(rs.getDate("releaseDate").toLocalDate())
+                .duration(rs.getInt("duration"))
+                .genres(getGenresOfFilm(filmId))
+                .build();
+        film.setId(filmId);
+        return film;
+    }
+
+
     @Override
     public Collection<Film> getAll() {
         Collection<Film> films = jdbcTemplate.query(GET_ALL_QUERY, (rs, rowNum) -> rowMapFilm(rs));
         directorService.setDirectorsListFilmsDB((List<Film>) films);
         return films;
     }
+
 
     @Override
     public Optional<Film> getById(Long id) {
@@ -98,7 +114,7 @@ public class FilmDbStorage implements FilmStorage {
         }
         log.info("В базе данных найден фильм: {}", films.get(0));
         Film film = films.get(0);
-        film.setDirectors(directorService.findDirectorByFilm(film.getId()));
+        film.setDirectors((directorService.findDirectorByFilm(film.getId())));
         if (film.getDirectors() == null) {
             film.setDirectors(new ArrayList<>());
         }
@@ -223,6 +239,72 @@ public class FilmDbStorage implements FilmStorage {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    @Override
+    public List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year) {
+        List<Film> films;
+        if (genreId == null && year == null) {
+            String sql = "SELECT f.*, MPARatings.ratingName, COUNT(l.userId) " +
+                    "FROM films AS f " +
+                    "LEFT JOIN filmLikes AS l ON l.filmId = f.id " +
+                    "LEFT JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId\n" +
+                    "LEFT JOIN films_directors AS fd ON fd.film_id  = f.id " +
+                    "LEFT JOIN directors AS d ON d.id  = fd.director_id " +
+                    "GROUP BY f.id " +
+                    "ORDER BY COUNT(l.userId) DESC " +
+                    "LIMIT ?";
+
+            films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), count);
+            directorService.setDirectorsListFilmsDB(films);
+            return films;
+        }
+
+        if (genreId != null && year != null) {
+            String sql = "SELECT f.*, MPARatings.ratingName FROM films f\n" +
+                    "LEFT JOIN genre g on f.id = g.filmId\n" +
+                    "LEFT JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId\n" +
+                    "LEFT JOIN filmLikes l ON l.filmId = f.id\n" +
+                    "LEFT JOIN films_directors AS fd ON fd.film_id  = f.id " +
+                    "LEFT JOIN directors AS d ON d.id  = fd.director_id " +
+                    "WHERE g.genreId = ? AND YEAR(f.releaseDate) = ? " +
+                    "GROUP BY f.id " +
+                    "ORDER BY COUNT(l.userId) DESC\n" +
+                    "LIMIT ? ";
+            films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, year, count);
+            directorService.setDirectorsListFilmsDB(films);
+            return films;
+        }
+
+        if (genreId == null) {
+            String sql = "SELECT f.*, MPARatings.ratingName FROM films f\n" +
+                    "LEFT JOIN genre g on f.id = g.filmId\n" +
+                    "LEFT JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId\n" +
+                    "LEFT JOIN filmLikes l ON l.filmId = f.id\n" +
+                    "LEFT JOIN films_directors AS fd ON fd.film_id  = f.id " +
+                    "LEFT JOIN directors AS d ON d.id  = fd.director_id " +
+                    "WHERE YEAR(f.releaseDate) = ? " +
+                    "GROUP BY f.id " +
+                    "ORDER BY COUNT(l.userId) DESC\n" +
+                    "LIMIT ? ";
+            films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), year, count);
+            directorService.setDirectorsListFilmsDB(films);
+            return films;
+        }
+
+        String sql = "SELECT f.*, MPARatings.ratingName FROM films f\n" +
+                "LEFT JOIN genre g on f.id = g.filmId\n" +
+                "LEFT JOIN MPARatings ON MPARatings.ratingMPAId = f.ratingMPAId\n" +
+                "LEFT JOIN filmLikes l ON l.filmId = f.id\n" +
+                "LEFT JOIN films_directors AS fd ON fd.film_id  = f.id " +
+                "LEFT JOIN directors AS d ON d.id  = fd.director_id " +
+                "WHERE g.genreId = ? " +
+                "GROUP BY f.id " +
+                "ORDER BY COUNT(l.userId) DESC\n" +
+                "LIMIT ? ";
+        films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, count);
+        directorService.setDirectorsListFilmsDB(films);
+        return films;
+    }
+
     private String getNameMpaOfFilm(Long ratingId) {
         String sqlQueryGetMpaName = "SELECT RATINGNAME FROM MPARatings  WHERE RATINGMPAID = ?";
         return String.valueOf(jdbcTemplate.queryForObject(sqlQueryGetMpaName, Integer.class, ratingId));
@@ -306,3 +388,5 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, this::rowMapFilms);
     }
 }
+
+

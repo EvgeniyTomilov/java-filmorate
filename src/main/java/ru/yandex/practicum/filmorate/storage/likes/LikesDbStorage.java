@@ -18,6 +18,7 @@ public class LikesDbStorage implements LikesStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
+
     @Override
     public Set<Integer> getLikesByFilmId(Long filmId) {
         String sqlQuery =
@@ -45,6 +46,7 @@ public class LikesDbStorage implements LikesStorage {
                 userId);
     }
 
+
     @Override
     public Integer getAmountOfLikes(Long filmId, Long userId) {
         int amount = 0;
@@ -59,6 +61,7 @@ public class LikesDbStorage implements LikesStorage {
         return amount;
     }
 
+
     @Override
     public Set<Long> getTopFilmLikes() {
         String sqlQueryTopFilmLikes =
@@ -68,3 +71,13 @@ public class LikesDbStorage implements LikesStorage {
         return new LinkedHashSet<>(jdbcTemplate.queryForList(sqlQueryTopFilmLikes, Long.class));
     }
 }
+
+
+//вывод популярного фильма по годам и жанру
+
+
+
+
+
+
+

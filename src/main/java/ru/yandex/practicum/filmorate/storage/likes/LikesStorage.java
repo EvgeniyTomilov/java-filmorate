@@ -7,9 +7,16 @@ public interface LikesStorage {
 
     Set<Long> getTopFilmLikes();
 
+    Set<Integer> getLikesByFilmId(Long filmId);
+
     void removeLike(Long idFilm, Long delIdUser);
 
     void addLike(Long id, Long userId);
 
-    Set<Integer> getLikesByFilmId(Long filmId);
+
+    //вывод популярного фильма по годам и режиссеру
+    //List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year);
+    //Collection<Film> getPopularsFilms(int count);
+
+
 }
