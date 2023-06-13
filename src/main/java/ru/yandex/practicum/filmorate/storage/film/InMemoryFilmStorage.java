@@ -72,8 +72,14 @@ public class InMemoryFilmStorage implements FilmStorage {
         return filmHashMap.containsKey(id);
     }
 
+
     @Override
-    public List<Film> getFilmsSortedByYears(int directorId) {
+    public List<Film> getFilmsSortedByYears(Long directorId) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getFilmsSortedByLikes(Long directorId) {
         return null;
     }
 
@@ -81,10 +87,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Film> searchFilms(String query, String[] searchParameters) {
         return null;
     }
+
+
+
 }
 
-    @Override
-    public List<Film> getFilmsSortedByLikes(int directorId) {
-        return null;
-    }
-}*/

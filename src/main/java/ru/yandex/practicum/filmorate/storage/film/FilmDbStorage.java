@@ -244,20 +244,23 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> searchFilms(String query, String[] searchParameters) {
         String queryByOneParam = searchParameters[0].equals("title") ?
-                " lower(film.name) like lower('%" + query + "%')" : //написать мелкими
-                " lower(d.director_name) like lower('%" + query + "%')";
+                " lower(film.name) like lower('%" + query + "%')" :
+                " lower(d.name) like lower('%" + query + "%')"; //
         String queryByTwoParams = searchParameters.length == 2 ?
-                "or lower(director_name) like lower('%" + query + "%')" : "";// изменить по факту имя директора
+                "or lower(name) like lower('%" + query + "%')" : "";// изменить по факту имя директора name
 
-        String sqlQuery = "select film.id, film.name, film.description, film.releasedate, film.duration, " +
+        String sqlQuery = "SELECT film.id, film.name, film.description, film.releasedate, film.duration, " +
                 "MPARatings.ratingMPAId, MPARatings.ratingname" +// добавить все поля для фильма
-                "count(likes.userid) as usersLikes, names.genre, names.genreid  from films film " +
-                "join MPARatings on films.ratingMPAId = MPARatings.ratingMPAId " +
-                "join genre genre on film.id = genre.filmid join genrenames names on genre.genreid = names.genreid " +
-                "join filmlikes likes on film.id=likes.filmid " +
-                "where " + queryByOneParam + queryByTwoParams +
-                " group by film.id, " +
-                "names.genreid order by usersLikes desc";
+                "count(likes.userid) as usersLikes, names.genre, names.genreid, fd.director_id, d.name " +//fd.director_id, d.name
+                "FROM films film " +
+                "JOIN MPARatings on films.ratingMPAId = MPARatings.ratingMPAId " +
+                "JOIN genre genre on film.id = genre.filmid " +
+                "JOIN genrenames names on genre.genreid = names.genreid " +
+                "JOIN film_directors as fd on film.film_id = fd.film_id " +// JOIN film_directors as fd on film.film_id = fd.film_id
+                "JOIN directors d ON d.id = fd.director_id " + //JOIN directors d ON d.id = fd.director_id
+                "WHERE " + queryByOneParam + queryByTwoParams +
+                " GROUP BY film.id, names.genreid " +
+                "ORDER BY usersLikes desc";
         return jdbcTemplate.query(sqlQuery,this::rowMapFilms); //  дописать после добавления фичи режисера
     }
 }
