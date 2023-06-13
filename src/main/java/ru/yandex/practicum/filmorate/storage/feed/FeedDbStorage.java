@@ -15,11 +15,12 @@ import ru.yandex.practicum.filmorate.model.Operations;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Collection;
 
 
 @Slf4j
-@Component
+@Component("FeedDbStorage")
 @Primary
 public class FeedDbStorage implements FeedStorage {
     private final JdbcTemplate jdbcTemplate;
@@ -31,6 +32,8 @@ public class FeedDbStorage implements FeedStorage {
     }
 
     public Event mapRowFeed(ResultSet rs, int rowNum) throws SQLException {
+        LocalDate birthday;
+
         return Event.builder()
                 .eventId(rs.getLong("event_id"))
                 .userId(rs.getLong("user_id"))

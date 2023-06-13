@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.model.EventTypes;
+import ru.yandex.practicum.filmorate.model.Operations;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -23,13 +26,20 @@ public class ReviewService {
     @Autowired
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
+    @Autowired
+    @Qualifier(value = "FeedDbStorage")
+    private FeedStorage feedStorage;
 
 
     @Autowired
     private final ReviewStorage reviewStorage;
 
-    public ReviewService(ReviewStorage reviewStorage) {
+
+    public ReviewService(FilmStorage filmStorage, UserStorage userStorage, ReviewStorage reviewStorage, FeedStorage feedStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
         this.reviewStorage = reviewStorage;
+        this.feedStorage = feedStorage;
     }
 
     public Review getReviewById(Long reviewId) {
@@ -50,12 +60,14 @@ public class ReviewService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         ;
-
+        feedStorage.addEvent(review.getUserId(), EventTypes.REVIEW, Operations.ADD, review.getReviewId());
         return reviewStorage.add(review);
+
     }
 
     public Review updateReview(Review review) {
         if (containsReview(review.getReviewId())) {
+            feedStorage.addEvent(review.getUserId(), EventTypes.REVIEW, Operations.UPDATE, review.getReviewId());
             return reviewStorage.update(review).get();
         }
         log.info("Отзыв " + review.getReviewId() + " не найден");
@@ -67,6 +79,7 @@ public class ReviewService {
             log.info("Отзыв " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        feedStorage.addEvent(getReviewById(id).getUserId(), EventTypes.REVIEW, Operations.REMOVE, id);
         reviewStorage.delete(id);
 
     }
