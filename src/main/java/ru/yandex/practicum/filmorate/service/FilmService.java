@@ -9,12 +9,12 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.error.exception.InvalidSearchParameters;
 import ru.yandex.practicum.filmorate.error.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -110,15 +110,6 @@ public class FilmService {
         return filmStorage.getPopularsFilms(count, genreId, year);
     }
 
-
-
-
-   /* public Collection<Film> getListOfTopFilms(int count) {
-        return likesStorage.getPopularsFilms(count);
-    }
-
-    */
-
     private boolean containsUser(Long id) {
         return userStorage.getUsersMap().containsKey(id);
     }
@@ -154,7 +145,6 @@ public class FilmService {
         log.info("Service.searchFilms: {} - query, {} - by", query, searchParameters);
         List<Film> findFilms = filmStorage.searchFilms(query, searchParameters);
         log.info("Service.searchFilms: {} - Finished", findFilms);
-
         return findFilms;
     }
 }

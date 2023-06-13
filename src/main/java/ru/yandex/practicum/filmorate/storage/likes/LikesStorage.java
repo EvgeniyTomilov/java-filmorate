@@ -13,10 +13,4 @@ public interface LikesStorage {
 
     void addLike(Long id, Long userId);
 
-
-    //вывод популярного фильма по годам и режиссеру
-    //List<Film> getPopularsFilms(Integer count, Integer genreId, Integer year);
-    //Collection<Film> getPopularsFilms(int count);
-
-
 }

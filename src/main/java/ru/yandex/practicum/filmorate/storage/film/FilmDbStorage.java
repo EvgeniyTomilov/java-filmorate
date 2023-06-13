@@ -126,7 +126,6 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-
     @Override
     public Optional<Film> getById(Long id) {
         List<Film> films = jdbcTemplate.query(GET_BY_ID_QUERY, (rs, rowNum) -> rowMapFilm(rs), id);

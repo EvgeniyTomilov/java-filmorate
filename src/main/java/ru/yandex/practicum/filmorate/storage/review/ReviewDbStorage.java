@@ -148,6 +148,5 @@ public class ReviewDbStorage implements ReviewStorage {
         jdbcTemplate.update(reviewSqlQuery, id, userId);
     }
 
-
 }
 
