@@ -62,9 +62,6 @@ public class FilmService {
             log.info("Фильм " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
-        log.info(FILM_NOT_FOUND + id);
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<Film> getAllFilms() {
@@ -129,6 +126,10 @@ public class FilmService {
             default:
                 throw new ObjectNotFoundException("Задан не корректный параметр сортировки");
         }
+    }
+
+    public List<Film> getFriendsCommonFilms(Long userId, Long friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 }
 
