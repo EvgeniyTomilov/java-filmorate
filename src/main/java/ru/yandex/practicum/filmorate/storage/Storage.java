@@ -14,4 +14,5 @@ public interface Storage<T> {
     void delete(Long id);
 
     Collection<T> getAll();
+
 }
