@@ -20,10 +20,11 @@ public interface UserStorage extends Storage<User> {
 
     Map<Long, User> getUsersMap();
 
+    Collection<Film> getRecommendations(Long id);
+
     void isExist(int userId);
 
 
-    Collection<Film> getRecommendations(Long id);
 
 
 }

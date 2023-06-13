@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 @Slf4j
 public class FilmService {
@@ -69,9 +70,6 @@ public class FilmService {
             log.info("Фильм " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-
-        log.info(FILM_NOT_FOUND + id);
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<Film> getAllFilms() {
@@ -108,13 +106,26 @@ public class FilmService {
         }
     }
 
-    public List<Film> getListPopularFilms(Integer count) {
+    public List<Film> getListPopularFilms(Integer count, Integer genreId, Integer year) {
         return likesStorage.getTopFilmLikes()
                 .stream()
                 .limit(count)
                 .map(this::getFilmById)
                 .collect(Collectors.toList());
     }
+
+    public List<Film> getTopPopularFilms(Integer count, Integer genreId, Integer year) {
+        return filmStorage.getPopularsFilms(count, genreId, year);
+    }
+
+
+
+
+   /* public Collection<Film> getListOfTopFilms(int count) {
+        return likesStorage.getPopularsFilms(count);
+    }
+
+    */
 
     private boolean containsUser(Long id) {
         return userStorage.getUsersMap().containsKey(id);
@@ -138,6 +149,10 @@ public class FilmService {
             default:
                 throw new ObjectNotFoundException("Задан не корректный параметр сортировки");
         }
+    }
+
+    public List<Film> getFriendsCommonFilms(Long userId, Long friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 }
 

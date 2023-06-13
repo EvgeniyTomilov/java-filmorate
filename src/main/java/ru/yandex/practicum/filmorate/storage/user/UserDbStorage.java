@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.error.exception.NullException;
 import ru.yandex.practicum.filmorate.error.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesDbStorage;
@@ -185,6 +186,24 @@ public class UserDbStorage implements UserStorage {
                     sqlQueryCommonFriends, id, otherId);
         }
         return commonFriends;
+    }
+
+    @Override
+    public Collection<Film> getRecommendations(Long id) {
+        Collection<Film> result = new HashSet<>();
+        Collection<Film> films = filmDbStorage.getAll();
+        getAll().forEach(user -> {
+            if (user.getId() != id) {
+                films.forEach(film -> {
+                    Integer userLikes = likesDbStorage.getAmountOfLikes(film.getId(), id);
+                    Integer otherUserLikes = likesDbStorage.getAmountOfLikes(film.getId(), user.getId());
+                    if (userLikes == 0 && otherUserLikes > 0) {
+                        result.add(film);
+                    }
+                });
+            }
+        });
+        return result;
     }
 
     @Override

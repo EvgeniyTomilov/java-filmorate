@@ -85,6 +85,11 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
+    public Collection<Film> getRecommendations(Long id) {
+        return null;
+    }
+
+    @Override
     public void addFriend(Long userId, Long idFriend) {
         User user = userHashMap.get(userId);
         user.addFriend(idFriend);
