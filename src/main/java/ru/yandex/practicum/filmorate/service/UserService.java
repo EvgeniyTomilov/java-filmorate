@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
@@ -21,6 +25,7 @@ public class UserService {
     @Autowired
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
+    private FeedStorage feedStorage;
 
     public User createUser(User user) {
         return userStorage.add(user);
@@ -116,5 +121,13 @@ public class UserService {
 
     private boolean contains(Long id) {
         return userStorage.getUsersMap().containsKey(id);
+    }
+
+    public Collection<Film> getRecommendations(Long id) {
+        return userStorage.getRecommendations(id);
+    }
+    public Collection<Event> getFeedById(int userId) {
+        userStorage.isExist(userId);
+        return feedStorage.getFeedById(userId);
     }
 }

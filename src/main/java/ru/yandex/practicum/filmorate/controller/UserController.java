@@ -3,6 +3,9 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -72,5 +75,17 @@ public class UserController {
         log.info("Удаление пользователя по id:" + userId + "...");
         userService.deleteUser(userId);
         log.info("Пользователь удален");
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public Collection<Film> getRecommendations(@Valid @PathVariable Long id) {
+        log.info("Получение рекомендаций пользователя " + id);
+        return userService.getRecommendations(id);
+    }
+
+    @GetMapping("{id}/feed")
+    public Collection<Event> getFeed(@PathVariable int id) {
+        log.info("Получение ленты событий пользователя id: " + id);
+            return userService.getFeedById(id);
     }
 }
