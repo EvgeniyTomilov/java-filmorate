@@ -59,7 +59,7 @@ public class FeedDbStorage implements FeedStorage {
                 .eventId(0L)
                 .build();
 
-        final String sql = "INSERT INTO events (timestamps, user_id, event_type, operation, entity_id) " +
+        final String sql = "INSERT INTO events (timestamp, user_id, event_type, operation, entity_id) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
