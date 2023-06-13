@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -26,7 +27,7 @@ public class RatingDbStorage implements RatingStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private MPA rowMapToMpa(ResultSet resultSet, int i) throws SQLException {
+    public MPA rowMapToMpa(ResultSet resultSet, int i) throws SQLException {
         return MPA.builder()
                 .id(resultSet.getInt("ratingMPAId"))
                 .name(resultSet.getString("ratingName"))
@@ -55,5 +56,16 @@ public class RatingDbStorage implements RatingStorage {
             log.info("В базе нет информации по запросу {}", sqlQueryGetAll);
         }
         return mpas;
+    }
+
+    @Override
+    public String getNameMpa(int mpaId) {
+        String sql = "SELECT RATINGNAME FROM MPARatings WHERE RATINGMPAID = ?";
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sql, mpaId);
+        if (userRows.next()) {
+            return userRows.getString("ratingName");
+        } else {
+            return null;
+        }
     }
 }
