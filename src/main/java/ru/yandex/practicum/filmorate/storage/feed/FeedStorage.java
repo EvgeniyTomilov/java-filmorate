@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.model.EventTypes;
 import ru.yandex.practicum.filmorate.model.Operations;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface FeedStorage {
     Collection<Event> getFeedById(long userId);
