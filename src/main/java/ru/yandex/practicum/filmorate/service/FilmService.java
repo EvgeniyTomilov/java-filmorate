@@ -36,9 +36,7 @@ public class FilmService {
     private final FeedStorage feedStorage;
     private static final String FILM_NOT_FOUND = "Фильм не найден № ";
 
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, LikesStorage likesStorage, DirectorService directorService, FeedStorage feedStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+    public FilmService(LikesStorage likesStorage, DirectorService directorService, FeedStorage feedStorage) {
         this.likesStorage = likesStorage;
         this.directorService = directorService;
         this.feedStorage = feedStorage;
