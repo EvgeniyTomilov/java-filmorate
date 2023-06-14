@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.List;
 
@@ -63,7 +64,6 @@ public class FilmController {
         return filmService.getTopPopularFilms(count, genreId, year);
     }
 
-
     @GetMapping("/director/{directorId}")
     public List<Film> getByDirectorId(@PathVariable("directorId") Long directorId, @RequestParam String sortBy) {
         return filmService.getDirectorFilms(directorId, sortBy);
@@ -76,10 +76,18 @@ public class FilmController {
         log.info("Фильм удален");
     }
 
-
     @GetMapping("/common")
     public List<Film> getFriendsCommonFilms(@RequestParam(name = "userId") Long userId,
                                             @RequestParam(name = "friendId") Long friendId) {
         return filmService.getFriendsCommonFilms(userId, friendId);
+    }
+
+    @GetMapping("/search")
+    public List<Film> searchFilms(@RequestParam @NotBlank String query,
+                                  @RequestParam(name = "by", required = false) String[] searchParameters) {
+        log.info("Controller.searchFilms: {} - query, {} - by", query, searchParameters);
+        List<Film> findFilms = filmService.searchFilms(query, searchParameters);
+        log.info("Controller.searchFilms: {} - Finished", findFilms);
+        return findFilms;
     }
 }

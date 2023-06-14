@@ -39,7 +39,7 @@ public class LikesDbStorage implements LikesStorage {
 
     @Override
     public void addLike(Long id, Long userId) {
-        String sqlQueryAdd = "MERGE INTO filmLikes(filmId,userId)" +
+        String sqlQueryAdd = "INSERT INTO filmLikes(filmId,userId)" +
                 " values(?,?)";
         jdbcTemplate.update(sqlQueryAdd,
                 id,

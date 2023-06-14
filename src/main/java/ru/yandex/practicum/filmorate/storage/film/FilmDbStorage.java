@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -33,6 +34,69 @@ public class FilmDbStorage implements FilmStorage {
     private final DirectorService directorService;
     private final RatingDbStorage ratingStorage;
 
+    private Film rowMapFilms(ResultSet rs, int rowNum) throws SQLException {
+        Long filmId = rs.getLong("id");
+        Genre genre = Genre.builder()
+                .id(rs.getInt("genreid"))
+                .name(rs.getString("genre"))
+                .build();
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+        if (genre.getId() == 0) {
+            genres = new LinkedHashSet<>();
+        } else {
+            genres.add(genre);
+        }
+        Director director = Director.builder()
+                .id(rs.getLong("director_id"))
+                .name(rs.getString("directorname"))
+                .build();
+        List<Director> directors = new ArrayList<>();
+        if (director.getId() == 0) {
+            directors = new ArrayList<>();
+        } else {
+            directors.add(director);
+        }
+        Film film = Film.builder()
+                .name(rs.getString("name"))
+                .description(rs.getString("description"))
+                .releaseDate(rs.getDate("releaseDate").toLocalDate())
+                .duration(rs.getInt("duration"))
+                .mpa(MPA.builder()
+                        .id(rs.getInt("ratingMPAId"))
+                        .name(rs.getString("RATINGNAME"))
+                        .build())
+                .genres(genres)
+                .likes(rs.getInt("usersLikes"))
+                .directors(directors)
+                .build();
+        film.setId(filmId);
+        return film;
+    }
+
+    @Override
+    public List<Film> searchFilms(String query, String[] searchParameters) {
+        String queryByOneParam = searchParameters[0].equals("title") ?
+                " lower(film.name) like lower('%" + query + "%')" :
+                " lower(directors.name) like lower('%" + query + "%')";
+        String queryByTwoParams = searchParameters.length == 2 ?
+                "or lower(directors.name) like lower('%" + query + "%')" : "";
+
+        String sqlQuery = "SELECT film.id, film.name as filmname, film.description, film.releasedate, film.duration, " +
+                "r.ratingMPAId, r.ratingname, count(likes.userid) as usersLikes, names.genre, names.genreid, " +
+                "directors.director_id, directors.name directorname" +
+                " FROM films film " +
+                "LEFT OUTER JOIN " +
+                "(SELECT * FROM FILMS_DIRECTORS fd JOIN directors d ON d.id = fd.director_id ) as directors " +
+                "ON directors.film_id = film.id " +
+                "LEFT JOIN MPARatings r on film.ratingMPAId = r.ratingMPAId " +
+                "LEFT JOIN genre genre on film.id = genre.filmid " +
+                "LEFT JOIN genrenames names on genre.genreid = names.genreid " +
+                "LEFT JOIN filmlikes likes on film.id = likes.filmid " +
+                "WHERE " + queryByOneParam + queryByTwoParams +
+                " GROUP BY film.id, names.genreid " +
+                "ORDER BY usersLikes desc";
+        return jdbcTemplate.query(sqlQuery, this::rowMapFilms);
+    }
 
     public Film rowMapFilm(ResultSet rs) throws SQLException {
         Long filmId = rs.getLong("id");
@@ -71,7 +135,6 @@ public class FilmDbStorage implements FilmStorage {
         directorService.setDirectorsListFilmsDB((List<Film>) films);
         return films;
     }
-
 
     @Override
     public Optional<Film> getById(Long id) {
