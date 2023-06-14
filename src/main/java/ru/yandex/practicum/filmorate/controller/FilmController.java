@@ -81,12 +81,13 @@ public class FilmController {
                                             @RequestParam(name = "friendId") Long friendId) {
         return filmService.getFriendsCommonFilms(userId, friendId);
     }
+
     @GetMapping("/search")
-    public List<Film> searchFilms (@RequestParam @NotBlank String query,
-                                   @RequestParam(name = "by", required = false) String[] searchParameters){
+    public List<Film> searchFilms(@RequestParam @NotBlank String query,
+                                  @RequestParam(name = "by", required = false) String[] searchParameters) {
         log.info("Controller.searchFilms: {} - query, {} - by", query, searchParameters);
         List<Film> findFilms = filmService.searchFilms(query, searchParameters);
-        log.info("Controller.searchFilms: {} - Finished",findFilms);
+        log.info("Controller.searchFilms: {} - Finished", findFilms);
         return findFilms;
     }
 }
