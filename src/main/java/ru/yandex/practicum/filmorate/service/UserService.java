@@ -23,6 +23,8 @@ public class UserService {
     @Autowired
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
+    @Autowired
+    @Qualifier(value = "feedDbStorage")
     private FeedStorage feedStorage;
 
     public User createUser(User user) {

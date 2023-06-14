@@ -27,7 +27,7 @@ public class ReviewService {
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
     @Autowired
-    @Qualifier(value = "FeedDbStorage")
+    @Qualifier(value = "feedDbStorage")
     private FeedStorage feedStorage;
 
 
@@ -59,16 +59,18 @@ public class ReviewService {
         if (!containsFilm(review.getFilmId()) || !containsUser(review.getUserId())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        ;
-        feedStorage.addEvent(review.getUserId(), EventTypes.REVIEW, Operations.ADD, review.getReviewId());
-        return reviewStorage.add(review);
+
+        Review reviewDb = reviewStorage.add(review);
+        feedStorage.addEvent(reviewDb.getUserId(), EventTypes.REVIEW, Operations.ADD, reviewDb.getReviewId());
+        return reviewDb;
 
     }
 
     public Review updateReview(Review review) {
         if (containsReview(review.getReviewId())) {
-            feedStorage.addEvent(review.getUserId(), EventTypes.REVIEW, Operations.UPDATE, review.getReviewId());
-            return reviewStorage.update(review).get();
+            Review reviewDb = reviewStorage.update(review).get();
+            feedStorage.addEvent(reviewDb.getUserId(), EventTypes.REVIEW, Operations.UPDATE, reviewDb.getReviewId());
+            return reviewDb;
         }
         log.info("Отзыв " + review.getReviewId() + " не найден");
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -89,15 +91,16 @@ public class ReviewService {
     }
 
     public void addLike(Long id, Long userId) {
-        containsUser(userId);
-        containsReview(id);
-        reviewStorage.addLike(id, userId);
+        if (containsUser(userId) && containsReview(id)) {
+            reviewStorage.addLike(id, userId);
+        }
+
     }
 
     public void addDislike(Long id, Long userId) {
-        containsUser(userId);
-        containsReview(id);
-        reviewStorage.addDislike(id, userId);
+        if (containsUser(userId) && containsReview(id)) {
+            reviewStorage.addDislike(id, userId);
+        }
     }
 
     public void deleteLike(Long id, Long userId) {
