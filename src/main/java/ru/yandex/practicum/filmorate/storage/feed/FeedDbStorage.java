@@ -77,7 +77,7 @@ public class FeedDbStorage implements FeedStorage {
         }, keyHolder);
 
         if (keyHolder.getKey() != null) {
-            event.setEventId( Long.parseLong(String.valueOf(keyHolder.getKey())));
+            event.setEventId(Long.parseLong(String.valueOf(keyHolder.getKey())));
         }
         log.info("Создано событие с id: {} ", event.getEventId());
         return event;

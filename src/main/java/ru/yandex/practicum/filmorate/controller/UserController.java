@@ -84,11 +84,7 @@ public class UserController {
         return userService.getRecommendations(id);
     }
 
-    @GetMapping("/{id}/recommendations")
-    public Collection<Film> getRecommendations(@Valid @PathVariable Long id) {
-        log.info("Получение рекомендаций пользователя " + id);
-        return userService.getRecommendations(id);
-    }
+
 
     @GetMapping("{id}/feed")
     public Collection<Event> getFeed(@PathVariable int id) {
