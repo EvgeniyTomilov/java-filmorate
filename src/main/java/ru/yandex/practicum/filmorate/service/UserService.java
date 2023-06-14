@@ -39,6 +39,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         if (contains(id)) {
+            userStorage.delete(id);
             getAllUsers()
                     .stream()
                     .forEach(user -> {
@@ -49,7 +50,6 @@ public class UserService {
                                     deleteFriend(userCommon.getId(), id);
                                 });
                     });
-            userStorage.delete(id);
         } else {
             log.info("User с id " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
