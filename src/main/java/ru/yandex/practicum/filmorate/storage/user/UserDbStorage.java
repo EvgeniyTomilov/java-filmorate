@@ -6,8 +6,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.error.exception.NullException;
+import ru.yandex.practicum.filmorate.error.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
@@ -202,4 +204,18 @@ public class UserDbStorage implements UserStorage {
         });
         return result;
     }
+
+
+    public void isExist(int userId) {
+        final String checkUserQuery = "SELECT * FROM users WHERE id = ?";
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(checkUserQuery, userId);
+
+        if (!userRows.next()) {
+            log.warn("Пользователь с идентификатором {} не найден.", userId);
+            throw new ObjectNotFoundException("Пользователь с идентификатором " + userId + " не найден.");
+        }
+
+    }
+
+
 }
