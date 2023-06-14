@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.model.EventTypes;
+import ru.yandex.practicum.filmorate.model.Operations;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -23,13 +26,20 @@ public class ReviewService {
     @Autowired
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
+    @Autowired
+    @Qualifier(value = "feedDbStorage")
+    private FeedStorage feedStorage;
 
 
     @Autowired
     private final ReviewStorage reviewStorage;
 
-    public ReviewService(ReviewStorage reviewStorage) {
+
+    public ReviewService(FilmStorage filmStorage, UserStorage userStorage, ReviewStorage reviewStorage, FeedStorage feedStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
         this.reviewStorage = reviewStorage;
+        this.feedStorage = feedStorage;
     }
 
     public Review getReviewById(Long reviewId) {
@@ -49,14 +59,18 @@ public class ReviewService {
         if (!containsFilm(review.getFilmId()) || !containsUser(review.getUserId())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        ;
 
-        return reviewStorage.add(review);
+        Review reviewDb = reviewStorage.add(review);
+        feedStorage.addEvent(reviewDb.getUserId(), EventTypes.REVIEW, Operations.ADD, reviewDb.getReviewId());
+        return reviewDb;
+
     }
 
     public Review updateReview(Review review) {
         if (containsReview(review.getReviewId())) {
-            return reviewStorage.update(review).get();
+            Review reviewDb = reviewStorage.update(review).get();
+            feedStorage.addEvent(reviewDb.getUserId(), EventTypes.REVIEW, Operations.UPDATE, reviewDb.getReviewId());
+            return reviewDb;
         }
         log.info("Отзыв " + review.getReviewId() + " не найден");
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -67,6 +81,7 @@ public class ReviewService {
             log.info("Отзыв " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        feedStorage.addEvent(getReviewById(id).getUserId(), EventTypes.REVIEW, Operations.REMOVE, id);
         reviewStorage.delete(id);
 
     }
@@ -76,15 +91,16 @@ public class ReviewService {
     }
 
     public void addLike(Long id, Long userId) {
-        containsUser(userId);
-        containsReview(id);
-        reviewStorage.addLike(id, userId);
+        if (containsUser(userId) && containsReview(id)) {
+            reviewStorage.addLike(id, userId);
+        }
+
     }
 
     public void addDislike(Long id, Long userId) {
-        containsUser(userId);
-        containsReview(id);
-        reviewStorage.addDislike(id, userId);
+        if (containsUser(userId) && containsReview(id)) {
+            reviewStorage.addDislike(id, userId);
+        }
     }
 
     public void deleteLike(Long id, Long userId) {

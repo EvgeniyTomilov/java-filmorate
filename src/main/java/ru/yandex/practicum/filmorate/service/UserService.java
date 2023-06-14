@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
@@ -22,6 +22,9 @@ public class UserService {
     @Autowired
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
+    @Autowired
+    @Qualifier(value = "feedDbStorage")
+    private FeedStorage feedStorage;
 
     public User createUser(User user) {
         return userStorage.add(user);
@@ -70,6 +73,7 @@ public class UserService {
         if (contains(id)) {
             if (contains(friendId)) {
                 userStorage.addFriend(id, friendId);
+                feedStorage.addEvent(id, EventTypes.FRIEND, Operations.ADD, friendId);
             } else {
                 log.info("Пользователь " + friendId + " не найден");
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -83,6 +87,7 @@ public class UserService {
     public void deleteFriend(Long id, Long friendId) {
         if (contains(id)) {
             if (contains(friendId)) {
+                feedStorage.addEvent(id, EventTypes.FRIEND, Operations.REMOVE, friendId);
                 userStorage.removeFriend(id, friendId);
             } else {
                 log.info("Пользователь " + friendId + " не найден");
@@ -121,5 +126,10 @@ public class UserService {
 
     public Collection<Film> getRecommendations(Long id) {
         return userStorage.getRecommendations(id);
+    }
+
+    public Collection<Event> getFeedById(int userId) {
+        userStorage.isExist(userId);
+        return feedStorage.getFeedById(userId);
     }
 }

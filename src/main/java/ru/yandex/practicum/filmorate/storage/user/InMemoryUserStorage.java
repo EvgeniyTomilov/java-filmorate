@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import lombok.extern.slf4j.Slf4j;
+/*import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -74,6 +74,17 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public void isExist(int userId) {
+
+    }
+
+    @Override
+    public Collection<Film> getRecommendations(Long id) {
+        return null;
+    }
+
+
+    @Override
     public Collection<Film> getRecommendations(Long id) {
         return null;
     }
@@ -139,3 +150,5 @@ public class InMemoryUserStorage implements UserStorage {
         return Objects.isNull(friendIds) || friendIds.isEmpty();
     }
 }
+
+ */
