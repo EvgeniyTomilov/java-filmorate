@@ -20,7 +20,7 @@ import java.util.Collection;
 
 
 @Slf4j
-@Component("FeedDbStorage")
+@Component("feedDbStorage")
 @Primary
 public class FeedDbStorage implements FeedStorage {
     private final JdbcTemplate jdbcTemplate;
@@ -40,7 +40,7 @@ public class FeedDbStorage implements FeedStorage {
                 .entityId(rs.getLong("entity_id"))
                 .eventType(EventTypes.valueOf(rs.getString("event_type")))
                 .operation(Operations.valueOf(rs.getString("operation")))
-                .timestamp(rs.getLong("timestamps"))
+                .timestamp(rs.getLong("timestamp"))
                 .build();
     }
 
@@ -77,7 +77,7 @@ public class FeedDbStorage implements FeedStorage {
         }, keyHolder);
 
         if (keyHolder.getKey() != null) {
-            event.setEventId((Long) keyHolder.getKey());
+            event.setEventId( Long.parseLong(String.valueOf(keyHolder.getKey())));
         }
         log.info("Создано событие с id: {} ", event.getEventId());
         return event;
