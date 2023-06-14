@@ -41,13 +41,21 @@ public class FilmDbStorage implements FilmStorage {
                 .name(rs.getString("genre"))
                 .build();
         LinkedHashSet<Genre> genres = new LinkedHashSet<>();
-        genres.add(genre);
+        if (genre.getId() == 0) {
+            genres = new LinkedHashSet<>();
+        } else {
+            genres.add(genre);
+        }
         Director director = Director.builder()
                 .id(rs.getLong("director_id"))
                 .name(rs.getString("directorname"))
                 .build();
         List<Director> directors = new ArrayList<>();
-        directors.add(director);
+        if (director.getId() == 0) {
+            directors = new ArrayList<>();
+        } else {
+            directors.add(director);
+        }
         Film film = Film.builder()
                 .name(rs.getString("name"))
                 .description(rs.getString("description"))
@@ -74,7 +82,8 @@ public class FilmDbStorage implements FilmStorage {
                 "or lower(directors.name) like lower('%" + query + "%')" : "";
 
         String sqlQuery = "SELECT film.id, film.name as filmname, film.description, film.releasedate, film.duration, " +
-                "r.ratingMPAId, r.ratingname, count(likes.userid) as usersLikes, names.genre, names.genreid, directors.director_id, directors.name directorname" +
+                "r.ratingMPAId, r.ratingname, count(likes.userid) as usersLikes, names.genre, names.genreid, " +
+                "directors.director_id, directors.name directorname" +
                 " FROM films film " +
                 "LEFT OUTER JOIN " +
                 "(SELECT * FROM FILMS_DIRECTORS fd JOIN directors d ON d.id = fd.director_id ) as directors " +
