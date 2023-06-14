@@ -59,6 +59,7 @@ public class FilmDbStorage implements FilmStorage {
                         .build())
                 .genres(genres)
                 .likes(rs.getInt("usersLikes"))
+                .directors(directors)
                 .build();
         film.setId(filmId);
         return film;
