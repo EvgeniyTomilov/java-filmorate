@@ -101,14 +101,6 @@ public class FilmService {
         }
     }
 
-    public List<Film> getListPopularFilms(Integer count, Integer genreId, Integer year) {
-        return likesStorage.getTopFilmLikes()
-                .stream()
-                .limit(count)
-                .map(this::getFilmById)
-                .collect(Collectors.toList());
-    }
-
     public List<Film> getTopPopularFilms(Integer count, Integer genreId, Integer year) {
         return filmStorage.getPopularsFilms(count, genreId, year);
     }
