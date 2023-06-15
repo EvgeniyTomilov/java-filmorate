@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.review;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -11,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Review;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,14 +46,17 @@ public class ReviewDbStorage implements ReviewStorage {
                 "ON REVIEWS.REVIEW_ID = REVIEW_LIKES.REVIEW_ID " +
                 "WHERE REVIEWS.REVIEW_ID = ? " +
                 "GROUP BY REVIEWS.REVIEW_ID";
-        List<Review> reviews = jdbcTemplate.query(query, (rs, rowNum) -> rowMapReview(rs), id);
-        if (reviews.isEmpty()) {
+        Optional<Review> reviews = null;
+        try {
+            reviews = Optional.of(jdbcTemplate.queryForObject(query, (rs, rowNum) -> rowMapReview(rs), id));
+            log.info("В базе данных найден отзыв: {}", reviews.get());
+            return reviews;
+        } catch (EmptyResultDataAccessException e) {
             log.info("Отзыва с идентификатором {} нет.", id);
-            return Optional.empty();
         }
-        log.info("В базе данных найден отзыв: {}", reviews.get(0));
-        return Optional.of(reviews.get(0));
+        return Optional.empty();
     }
+
 
     @Override
     public Review add(Review review) {
