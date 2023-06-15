@@ -46,7 +46,6 @@ public class LikesDbStorage implements LikesStorage {
                 userId);
     }
 
-
     @Override
     public Integer getAmountOfLikes(Long filmId, Long userId) {
         int amount = 0;
