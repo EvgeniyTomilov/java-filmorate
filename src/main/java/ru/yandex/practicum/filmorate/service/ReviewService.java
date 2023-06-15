@@ -27,7 +27,6 @@ public class ReviewService {
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
     @Autowired
-    @Qualifier(value = "feedDbStorage")
     private FeedStorage feedStorage;
 
 
@@ -35,12 +34,9 @@ public class ReviewService {
     private final ReviewStorage reviewStorage;
 
 
-    public ReviewService(FilmStorage filmStorage, UserStorage userStorage, ReviewStorage reviewStorage, FeedStorage feedStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-        this.reviewStorage = reviewStorage;
-        this.feedStorage = feedStorage;
-    }
+    public ReviewService(@Qualifier("reviewDbStorage") ReviewStorage reviewStorage) {
+                this.reviewStorage = reviewStorage;
+            }
 
     public Review getReviewById(Long reviewId) {
         if (containsReview(reviewId)) {

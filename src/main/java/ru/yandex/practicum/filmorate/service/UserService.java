@@ -23,7 +23,6 @@ public class UserService {
     @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
     @Autowired
-    @Qualifier(value = "feedDbStorage")
     private FeedStorage feedStorage;
 
     public User createUser(User user) {
@@ -40,6 +39,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         if (contains(id)) {
+            userStorage.delete(id);
             getAllUsers()
                     .stream()
                     .forEach(user -> {
@@ -50,10 +50,8 @@ public class UserService {
                                     deleteFriend(userCommon.getId(), id);
                                 });
                     });
-            userStorage.delete(id);
         } else {
             log.info("User с id " + id + " не найден");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -88,11 +86,11 @@ public class UserService {
         if (contains(id)) {
             if (contains(friendId)) {
                 feedStorage.addEvent(id, EventTypes.FRIEND, Operations.REMOVE, friendId);
-                userStorage.removeFriend(id, friendId);
             } else {
                 log.info("Пользователь " + friendId + " не найден");
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                //throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
+            userStorage.removeFriend(id, friendId);
         } else {
             log.info("Пользователь " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
