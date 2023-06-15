@@ -88,7 +88,6 @@ public class UserService {
                 feedStorage.addEvent(id, EventTypes.FRIEND, Operations.REMOVE, friendId);
             } else {
                 log.info("Пользователь " + friendId + " не найден");
-                //throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             userStorage.removeFriend(id, friendId);
         } else {

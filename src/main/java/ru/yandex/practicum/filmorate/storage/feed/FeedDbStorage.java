@@ -21,19 +21,15 @@ import java.util.Collection;
 
 @Slf4j
 @Component("feedDbStorage")
-@Primary
 public class FeedDbStorage implements FeedStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
     public FeedDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
 
     }
 
     public Event mapRowFeed(ResultSet rs, int rowNum) throws SQLException {
-        LocalDate birthday;
-
         return Event.builder()
                 .eventId(rs.getLong("EVENT_ID"))
                 .userId(rs.getLong("USER_ID"))

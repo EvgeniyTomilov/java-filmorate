@@ -247,7 +247,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlQueryDelete, id);
     }
 
-    private LinkedHashSet<Genre> getGenresOfFilm(Long filmId) {
+    public LinkedHashSet<Genre> getGenresOfFilm(Long filmId) {
         String sqlQueryGetGenres = "SELECT GENREID FROM GENRE WHERE FILMID = ?";
         return jdbcTemplate.queryForList(sqlQueryGetGenres, Integer.class, filmId)
                 .stream()
