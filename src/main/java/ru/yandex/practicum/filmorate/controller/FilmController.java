@@ -66,6 +66,7 @@ public class FilmController {
 
     @GetMapping("/director/{directorId}")
     public List<Film> getByDirectorId(@PathVariable("directorId") Long directorId, @RequestParam String sortBy) {
+        log.info("Получение списка фильмов режисёра по id: " + directorId);
         return filmService.getDirectorFilms(directorId, sortBy);
     }
 
@@ -79,6 +80,7 @@ public class FilmController {
     @GetMapping("/common")
     public List<Film> getFriendsCommonFilms(@RequestParam(name = "userId") Long userId,
                                             @RequestParam(name = "friendId") Long friendId) {
+        log.info("Получение списка общих фильмов пользователей с id: " + userId + " и " + friendId);
         return filmService.getFriendsCommonFilms(userId, friendId);
     }
 
