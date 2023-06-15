@@ -262,7 +262,7 @@ public class FilmDbStorage implements FilmStorage {
             String sql = "SELECT F.*, MPARATINGS.RATINGNAME, COUNT(L.USERID) " +
                     "FROM FILMS AS F " +
                     "LEFT JOIN FILMLIKES AS L ON L.FILMID = F.ID " +
-                    "LEFT JOIN MPARATINGS ON MPARATINGS.RATINGMPAID = F.RATINGMPAID\n" +
+                    "LEFT JOIN MPARATINGS ON MPARATINGS.RATINGMPAID = F.RATINGMPAID " +
                     "LEFT JOIN FILMS_DIRECTORS AS FD ON FD.FILM_ID  = F.ID " +
                     "LEFT JOIN DIRECTORS AS D ON D.ID  = FD.DIRECTOR_ID " +
                     "GROUP BY F.ID " +
@@ -275,15 +275,15 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         if (genreId != null && year != null) {
-            String sql = "SELECT F.*, MPARATINGS.RATINGNAME FROM FILMS F\n" +
-                    "LEFT JOIN GENRE G ON F.ID = G.FILMID\n" +
-                    "LEFT JOIN MPARATINGS ON MPARATINGS.RATINGMPAID = F.RATINGMPAID\n" +
-                    "LEFT JOIN FILMLIKES L ON L.FILMID = F.ID\n" +
+            String sql = "SELECT F.*, MPARATINGS.RATINGNAME FROM FILMS F " +
+                    "LEFT JOIN GENRE G ON F.ID = G.FILMID " +
+                    "LEFT JOIN MPARATINGS ON MPARATINGS.RATINGMPAID = F.RATINGMPAID " +
+                    "LEFT JOIN FILMLIKES L ON L.FILMID = F.ID " +
                     "LEFT JOIN FILMS_DIRECTORS AS FD ON FD.FILM_ID  = F.ID " +
                     "LEFT JOIN DIRECTORS AS D ON D.ID  = FD.DIRECTOR_ID " +
                     "WHERE G.GENREID = ? AND YEAR(F.RELEASEDATE) = ? " +
                     "GROUP BY F.ID " +
-                    "ORDER BY COUNT(L.USERID) DESC\n" +
+                    "ORDER BY COUNT(L.USERID) DESC " +
                     "LIMIT ? ";
             films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, year, count);
             directorService.setDirectorsListFilmsDB(films);
@@ -291,39 +291,34 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         if (genreId == null) {
-            String sql = "SELECT F.*, MPARATINGS.RATINGNAME FROM FILMS F\n" +
-                    "LEFT JOIN GENRE G ON F.ID = G.FILMID\n" +
-                    "LEFT JOIN MPARATINGS ON MPARATINGS.RATINGMPAID = F.RATINGMPAID\n" +
-                    "LEFT JOIN FILMLIKES L ON L.FILMID = F.ID\n" +
+            String sql = "SELECT F.*, MPARATINGS.RATINGNAME FROM FILMS F " +
+                    "LEFT JOIN GENRE G ON F.ID = G.FILMID " +
+                    "LEFT JOIN MPARATINGS ON MPARATINGS.RATINGMPAID = F.RATINGMPAID " +
+                    "LEFT JOIN FILMLIKES L ON L.FILMID = F.ID " +
                     "LEFT JOIN FILMS_DIRECTORS AS FD ON FD.FILM_ID  = F.ID " +
                     "LEFT JOIN DIRECTORS AS D ON D.ID  = FD.DIRECTOR_ID " +
                     "WHERE YEAR(F.RELEASEDATE) = ? " +
                     "GROUP BY F.ID " +
-                    "ORDER BY COUNT(L.USERID) DESC\n" +
+                    "ORDER BY COUNT(L.USERID) DESC " +
                     "LIMIT ? ";
             films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), year, count);
             directorService.setDirectorsListFilmsDB(films);
             return films;
         }
 
-        String sql = "SELECT F.*, MPARATINGS.RATINGNAME FROM FILMS F\n" +
-                "LEFT JOIN GENRE G ON F.ID = G.FILMID\n" +
-                "LEFT JOIN MPARATINGS ON MPARATINGS.RATINGMPAID = F.RATINGMPAID\n" +
-                "LEFT JOIN FILMLIKES L ON L.FILMID = F.ID\n" +
+        String sql = "SELECT F.*, MPARATINGS.RATINGNAME FROM FILMS F " +
+                "LEFT JOIN GENRE G ON F.ID = G.FILMID " +
+                "LEFT JOIN MPARATINGS ON MPARATINGS.RATINGMPAID = F.RATINGMPAID " +
+                "LEFT JOIN FILMLIKES L ON L.FILMID = F.ID " +
                 "LEFT JOIN FILMS_DIRECTORS AS FD ON FD.FILM_ID  = F.ID " +
                 "LEFT JOIN DIRECTORS AS D ON D.ID  = FD.DIRECTOR_ID " +
                 "WHERE G.GENREID = ? " +
                 "GROUP BY F.ID " +
-                "ORDER BY COUNT(L.USERID) DESC\n" +
+                "ORDER BY COUNT(L.USERID) DESC " +
                 "LIMIT ? ";
         films = jdbcTemplate.query(sql, (rs, rowNum) -> rowMapFilm(rs), genreId, count);
         directorService.setDirectorsListFilmsDB(films);
         return films;
-    }
-
-    private String getNameMpaOfFilm(Long ratingId) {
-        String sqlQueryGetMpaName = "SELECT RATINGNAME FROM MPARATINGS  WHERE RATINGMPAID = ?";
-        return String.valueOf(jdbcTemplate.queryForObject(sqlQueryGetMpaName, Integer.class, ratingId));
     }
 
     @Override
