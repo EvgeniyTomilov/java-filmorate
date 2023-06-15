@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.SortBy;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -67,7 +68,7 @@ public class FilmController {
     @GetMapping("/director/{directorId}")
     public List<Film> getByDirectorId(@PathVariable("directorId") Long directorId, @RequestParam String sortBy) {
         log.info("Получение списка фильмов режисёра по id: " + directorId);
-        return filmService.getDirectorFilms(directorId, sortBy);
+        return filmService.getDirectorFilms(directorId, SortBy.valueOf(sortBy.toUpperCase()));
     }
 
     @DeleteMapping("/{filmId}")

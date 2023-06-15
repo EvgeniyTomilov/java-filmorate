@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.error.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.EventTypes;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Operations;
+import ru.yandex.practicum.filmorate.model.SortBy;
 import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
@@ -111,15 +112,15 @@ public class FilmService {
         return filmStorage.getById(id).isPresent();
     }
 
-    public List<Film> getDirectorFilms(Long id, String sortBy) {
+    public List<Film> getDirectorFilms(Long id, SortBy sortBy) {
         if (directorService.getFilmDirectorsById(id).isEmpty()) {
             throw new ObjectNotFoundException("Режиссер у фильма не указан ");
         }
         switch (sortBy) {
-            case "year":
+            case YEAR:
                 List<Film> films = filmStorage.getFilmsSortedByYears(id);
                 return films;
-            case "likes":
+            case LIKES:
                 films = filmStorage.getFilmsSortedByLikes(id);
                 return films;
             default:
