@@ -76,5 +76,4 @@ public class ReviewController {
         reviewService.deleteDislike(id, userId);
         log.info("Дизлайк удален");
     }
-
 }

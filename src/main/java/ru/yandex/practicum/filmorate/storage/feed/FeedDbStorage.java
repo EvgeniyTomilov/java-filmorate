@@ -35,18 +35,18 @@ public class FeedDbStorage implements FeedStorage {
         LocalDate birthday;
 
         return Event.builder()
-                .eventId(rs.getLong("event_id"))
-                .userId(rs.getLong("user_id"))
-                .entityId(rs.getLong("entity_id"))
-                .eventType(EventTypes.valueOf(rs.getString("event_type")))
-                .operation(Operations.valueOf(rs.getString("operation")))
-                .timestamp(rs.getLong("timestamp"))
+                .eventId(rs.getLong("EVENT_ID"))
+                .userId(rs.getLong("USER_ID"))
+                .entityId(rs.getLong("ENTITY_ID"))
+                .eventType(EventTypes.valueOf(rs.getString("EVENT_TYPE")))
+                .operation(Operations.valueOf(rs.getString("OPERATION")))
+                .timestamp(rs.getLong("TIMESTAMP"))
                 .build();
     }
 
     @Override
     public Collection<Event> getFeedById(long userId) {
-        final String sql = "SELECT * FROM events WHERE user_id = ?";
+        final String sql = "SELECT * FROM EVENTS WHERE USER_ID = ?";
         log.info("Лента событий пользователя с id {} :", userId);
         return jdbcTemplate.query(sql, this::mapRowFeed, userId);
     }
@@ -62,12 +62,12 @@ public class FeedDbStorage implements FeedStorage {
                 .eventId(0L)
                 .build();
 
-        final String sql = "INSERT INTO events (timestamp, user_id, event_type, operation, entity_id) " +
+        final String sql = "INSERT INTO EVENTS (TIMESTAMP, USER_ID, EVENT_TYPE, OPERATION, ENTITY_ID) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement p = connection.prepareStatement(sql, new String[]{"event_id"});
+            PreparedStatement p = connection.prepareStatement(sql, new String[]{"EVENT_ID"});
             p.setLong(1, event.getTimestamp());
             p.setLong(2, event.getUserId());
             p.setString(3, event.getEventType().toString());
