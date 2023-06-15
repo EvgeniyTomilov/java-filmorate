@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Builder;
 import lombok.Data;
 
-//@FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
 @Builder
 public class Event {

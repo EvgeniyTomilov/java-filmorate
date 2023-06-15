@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.validation.customAnnotation.AfterBirthOfCinema;
 
 import javax.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
+@Validated
 public class Film {
 
     private Long id;
