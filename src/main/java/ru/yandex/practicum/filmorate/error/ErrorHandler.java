@@ -41,7 +41,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleInternalError(final RuntimeException e) {
+    public Map<String, String> handleInternalError(final Throwable e) {
         log.info("код 500");
         return Map.of(
                 "error", "Возникло исключение",

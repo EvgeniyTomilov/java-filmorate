@@ -39,33 +39,33 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public User getUserById(@Valid @PathVariable Long id) {
+    public User getUserById(@PathVariable Long id) {
         log.info("Вызов пользователя по ID:" + id + "...");
         return userService.getUserById(id);
     }
 
     @PutMapping("/{id}/friends/{userId}")
-    public void addFriend(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+    public void addFriend(@PathVariable Long id, @Valid @PathVariable Long userId) {
         log.info("Добавление друга " + id + "...");
         userService.addFriend(id, userId);
         log.info("Друг добавлен");
     }
 
     @DeleteMapping("/{id}/friends/{userId}")
-    public void deleteFriend(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+    public void deleteFriend(@PathVariable Long id, @Valid @PathVariable Long userId) {
         log.info("Добавление друга " + id + "...");
         userService.deleteFriend(id, userId);
         log.info("Друг удален");
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> getListOfFriends(@Valid @PathVariable Long id) {
+    public Collection<User> getListOfFriends(@PathVariable Long id) {
         log.info("Вызов друзей пользователя" + id + "...");
         return userService.getListOfFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{userId}")
-    public Collection<User> getListSharedFriends(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
+    public Collection<User> getListSharedFriends(@PathVariable Long id, @Valid @PathVariable Long userId) {
         log.info("Вызов взаимных друзей пользователя " + id + " и пользователя " + userId + "...");
         return userService.getListSharedFriends(id, userId);
     }
@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/recommendations")
-    public Collection<Film> getRecommendations(@Valid @PathVariable Long id) {
+    public Collection<Film> getRecommendations(@PathVariable Long id) {
         log.info("Получение рекомендаций пользователя " + id);
         return userService.getRecommendations(id);
     }

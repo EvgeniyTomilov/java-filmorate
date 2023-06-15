@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,18 +23,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
 
-    @Autowired
-    @Qualifier(value = "filmDbStorage")
-    private FilmStorage filmStorage;
-    @Autowired
-    @Qualifier(value = "userDbStorage")
-    private UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
     private final LikesStorage likesStorage;
     private final DirectorService directorService;
     private final FeedStorage feedStorage;
     private static final String FILM_NOT_FOUND = "Фильм не найден № ";
 
-    public FilmService(LikesStorage likesStorage, DirectorService directorService, FeedStorage feedStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, LikesStorage likesStorage, DirectorService directorService, FeedStorage feedStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
         this.likesStorage = likesStorage;
         this.directorService = directorService;
         this.feedStorage = feedStorage;

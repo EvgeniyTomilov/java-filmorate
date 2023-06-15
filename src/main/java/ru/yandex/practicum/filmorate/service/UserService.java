@@ -20,7 +20,6 @@ public class UserService {
     private Set<Long> friends = new HashSet<>();
 
     @Autowired
-    @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
     @Autowired
     private FeedStorage feedStorage;

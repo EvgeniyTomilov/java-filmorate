@@ -74,7 +74,8 @@ public class ReviewService {
             log.info("Отзыв " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        feedStorage.addEvent(getReviewById(id).getUserId(), EventTypes.REVIEW, Operations.REMOVE, id);
+        Long userId = getReviewById(id).getUserId();
+        feedStorage.addEvent(userId, EventTypes.REVIEW, Operations.REMOVE, id);
         reviewStorage.delete(id);
     }
 
