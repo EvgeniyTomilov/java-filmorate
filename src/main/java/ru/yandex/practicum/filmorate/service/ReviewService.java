@@ -28,8 +28,6 @@ public class ReviewService {
     private UserStorage userStorage;
     @Autowired
     private FeedStorage feedStorage;
-
-
     @Autowired
     private final ReviewStorage reviewStorage;
 
@@ -59,7 +57,6 @@ public class ReviewService {
         Review reviewDb = reviewStorage.add(review);
         feedStorage.addEvent(reviewDb.getUserId(), EventTypes.REVIEW, Operations.ADD, reviewDb.getReviewId());
         return reviewDb;
-
     }
 
     public Review updateReview(Review review) {
@@ -79,7 +76,6 @@ public class ReviewService {
         }
         feedStorage.addEvent(getReviewById(id).getUserId(), EventTypes.REVIEW, Operations.REMOVE, id);
         reviewStorage.delete(id);
-
     }
 
     public List<Review> getListReviewsFilm(Long filmId, int count) {
@@ -90,7 +86,6 @@ public class ReviewService {
         if (containsUser(userId) && containsReview(id)) {
             reviewStorage.addLike(id, userId);
         }
-
     }
 
     public void addDislike(Long id, Long userId) {

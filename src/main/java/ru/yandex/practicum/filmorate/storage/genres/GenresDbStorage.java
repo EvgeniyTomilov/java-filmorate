@@ -24,8 +24,8 @@ public class GenresDbStorage implements GenresStorage {
 
     private Genre rowMapToGenre(ResultSet resultSet, int i) throws SQLException {
         return Genre.builder()
-                .id(resultSet.getInt("genreId"))
-                .name(resultSet.getString("genre"))
+                .id(resultSet.getInt("GENREID"))
+                .name(resultSet.getString("GENRE"))
                 .build();
     }
 
@@ -35,7 +35,7 @@ public class GenresDbStorage implements GenresStorage {
             return null;
         }
         Genre genre = null;
-        String sqlQueryGetById = "SELECT * FROM genreNames WHERE genreId=?";
+        String sqlQueryGetById = "SELECT * FROM GENRENAMES WHERE GENREID=?";
         try {
             genre = jdbcTemplate.queryForObject(sqlQueryGetById, this::rowMapToGenre, genreId);
         } catch (EmptyResultDataAccessException e) {
@@ -47,7 +47,7 @@ public class GenresDbStorage implements GenresStorage {
     @Override
     public List<Genre> getAllGenres() {
         List<Genre> genres = new ArrayList<>();
-        String sqlQueryGetAllGenres = "SELECT * FROM genreNames";
+        String sqlQueryGetAllGenres = "SELECT * FROM GENRENAMES";
         try {
             genres = jdbcTemplate.query(sqlQueryGetAllGenres, this::rowMapToGenre);
         } catch (EmptyResultDataAccessException e) {
@@ -59,7 +59,7 @@ public class GenresDbStorage implements GenresStorage {
 
     @Override
     public void createGenre(Genre genre) {
-        String sqlQueryCreateGenre = "INSERT INTO genreNames(genre) values(?)";
+        String sqlQueryCreateGenre = "INSERT INTO GENRENAMES(GENRE) VALUES(?)";
         jdbcTemplate.update(sqlQueryCreateGenre, genre.getName());
     }
 }

@@ -18,20 +18,19 @@ public class LikesDbStorage implements LikesStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-
     @Override
     public Set<Integer> getLikesByFilmId(Long filmId) {
         String sqlQuery =
-                "SELECT userId " +
-                        "FROM filmLikes " +
-                        "WHERE filmId = ?";
+                "SELECT USERID " +
+                        "FROM FILMLIKES " +
+                        "WHERE FILMID = ?";
         List<Integer> likes = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
         return new HashSet<>(likes);
     }
 
     @Override
     public void removeLike(Long idFilm, Long userId) {
-        String sqlQueryRemoveLike = "DELETE FROM filmLikes WHERE filmId = ? AND userId = ?";
+        String sqlQueryRemoveLike = "DELETE FROM FILMLIKES WHERE FILMID = ? AND USERID = ?";
         jdbcTemplate.update(sqlQueryRemoveLike,
                 idFilm,
                 userId);
@@ -39,8 +38,8 @@ public class LikesDbStorage implements LikesStorage {
 
     @Override
     public void addLike(Long id, Long userId) {
-        String sqlQueryAdd = "MERGE INTO filmLikes(filmId,userId)" +
-                " values(?,?)";
+        String sqlQueryAdd = "MERGE INTO FILMLIKES(FILMID,USERID)" +
+                " VALUES(?,?)";
         jdbcTemplate.update(sqlQueryAdd,
                 id,
                 userId);
@@ -49,8 +48,8 @@ public class LikesDbStorage implements LikesStorage {
     @Override
     public Integer getAmountOfLikes(Long filmId, Long userId) {
         int amount = 0;
-        String sqlAmountOfLikes = "SELECT count(*) " +
-                "FROM filmLikes WHERE filmId=? AND userId = ?";
+        String sqlAmountOfLikes = "SELECT COUNT(*) " +
+                "FROM FILMLIKES WHERE FILMID=? AND USERID = ?";
         try {
             amount = jdbcTemplate.queryForObject(sqlAmountOfLikes, Integer.class, filmId, userId);
         } catch (EmptyResultDataAccessException e) {
@@ -60,23 +59,12 @@ public class LikesDbStorage implements LikesStorage {
         return amount;
     }
 
-
     @Override
     public Set<Long> getTopFilmLikes() {
         String sqlQueryTopFilmLikes =
-                "SELECT t.id FROM films t LEFT JOIN " +
-                        "(SELECT filmId as id, count(userId) AS count FROM filmLikes GROUP BY filmId) AS cn ON t.id = cn.id " +
-                        "ORDER BY (COALESCE(t.RATE, 0) + COALESCE(cn.count, 0)) desc";
+                "SELECT T.ID FROM FILMS T LEFT JOIN " +
+                        "(SELECT FILMID AS ID, COUNT(USERID) AS COUNT FROM FILMLIKES GROUP BY FILMID) AS CN ON T.ID = CN.ID " +
+                        "ORDER BY (COALESCE(T.RATE, 0) + COALESCE(CN.COUNT, 0)) DESC";
         return new LinkedHashSet<>(jdbcTemplate.queryForList(sqlQueryTopFilmLikes, Long.class));
     }
 }
-
-
-//вывод популярного фильма по годам и жанру
-
-
-
-
-
-
-

@@ -64,7 +64,6 @@ public class UserController {
         return userService.getListOfFriends(id);
     }
 
-
     @GetMapping("/{id}/friends/common/{userId}")
     public Collection<User> getListSharedFriends(@Valid @PathVariable Long id, @Valid @PathVariable Long userId) {
         log.info("Вызов взаимных друзей пользователя " + id + " и пользователя " + userId + "...");

@@ -23,7 +23,6 @@ public class ErrorHandler {
         );
     }
 
-
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundError(final NoSuchElementException e) {
         log.info("код 404");
