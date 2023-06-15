@@ -31,20 +31,4 @@ public class User {
 
     @PastOrPresent(message = "дата рождения не может быть в будущем")
     private LocalDate birthday;
-
-    private Set<Long> friends;
-
-    public void setFriends(Set<Long> friends) {
-        this.friends.addAll(friends);
-    }
-
-    public void addFriend(Long friendId) {
-        this.friends.add(friendId);
-    }
-
-    public void removeFriend(Long friendId) {
-        if (this.friends != null) {
-            this.friends.remove(friendId);
-        }
-    }
 }

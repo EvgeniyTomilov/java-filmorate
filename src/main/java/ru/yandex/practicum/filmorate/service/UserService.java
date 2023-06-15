@@ -10,14 +10,10 @@ import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 @Slf4j
 public class UserService {
-    private Set<Long> friends = new HashSet<>();
-
     @Autowired
     private UserStorage userStorage;
     @Autowired
