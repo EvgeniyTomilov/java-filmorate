@@ -34,16 +34,6 @@ public class UserService {
     public void deleteUser(Long id) {
         if (contains(id)) {
             userStorage.delete(id);
-            getAllUsers()
-                    .stream()
-                    .forEach(user -> {
-                        deleteFriend(user.getId(), id);
-                        userStorage.getCommonFriends(id, user.getId())
-                                .stream()
-                                .forEach(userCommon -> {
-                                    deleteFriend(userCommon.getId(), id);
-                                });
-                    });
         } else {
             log.info("User с id " + id + " не найден");
         }

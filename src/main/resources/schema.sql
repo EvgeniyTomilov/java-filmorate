@@ -1,15 +1,15 @@
-DROP TABLE IF EXISTS REVIEW_LIKES;
-DROP TABLE IF EXISTS REVIEWS;
-DROP TABLE IF EXISTS films_directors;
-DROP TABLE IF EXISTS directors;
-DROP TABLE IF EXISTS films;
-DROP TABLE IF EXISTS genreNames;
-DROP TABLE IF EXISTS genre;
-DROP TABLE IF EXISTS MPARatings;
-DROP TABLE IF EXISTS filmLikes;
-DROP TABLE IF EXISTS userFriends;
-DROP TABLE IF EXISTS events;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS REVIEW_LIKES CASCADE;
+DROP TABLE IF EXISTS REVIEWS CASCADE;
+DROP TABLE IF EXISTS films_directors CASCADE;
+DROP TABLE IF EXISTS directors CASCADE;
+DROP TABLE IF EXISTS films CASCADE;
+DROP TABLE IF EXISTS genreNames CASCADE;
+DROP TABLE IF EXISTS genre CASCADE;
+DROP TABLE IF EXISTS MPARatings CASCADE;
+DROP TABLE IF EXISTS filmLikes CASCADE;
+DROP TABLE IF EXISTS userFriends CASCADE;
+DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE IF NOT EXISTS films
 (
@@ -62,6 +62,13 @@ CREATE TABLE IF NOT EXISTS userFriends
     userId    LONG,
     friendsId LONG,
     status    BOOLEAN,
+ constraint userFriends_userId_fk
+ foreign key (userId) references users(id)
+ ON DELETE CASCADE,
+ constraint userFriends_friendsId_fk
+ foreign key (friendsId) references users(id)
+  ON DELETE CASCADE,
+constraint userFriends_pk
     PRIMARY KEY (userId, friendsId)
 );
 
