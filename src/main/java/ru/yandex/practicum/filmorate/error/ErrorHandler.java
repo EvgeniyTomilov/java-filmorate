@@ -39,7 +39,7 @@ public class ErrorHandler {
         return new ErrorResponse("404", e.getMessage());
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})
+    @ExceptionHandler ({IllegalArgumentException.class, NullPointerException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleInternalError(final Throwable e) {
         log.info("код 500");

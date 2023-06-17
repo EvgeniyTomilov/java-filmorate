@@ -32,7 +32,7 @@ public class ReviewService {
     private final ReviewStorage reviewStorage;
 
 
-    public ReviewService(@Qualifier("reviewDbStorage") ReviewStorage reviewStorage) {
+    public ReviewService(ReviewStorage reviewStorage) {
                 this.reviewStorage = reviewStorage;
             }
 

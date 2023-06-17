@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.RatingService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -20,7 +21,8 @@ public class RatingController {
 
     @GetMapping("/{id}")
     public MPA getMpaById(@PathVariable Integer id) {
-        if (ratingService.getRatingById(id).isPresent()) {
+        Optional<MPA> ratingById = ratingService.getRatingById(id);
+        if (ratingById.isPresent()) {
             log.info("Получение рейтинга с id: " + id);
             return ratingService.getRatingById(id).get();
         }

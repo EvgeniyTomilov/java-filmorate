@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FilmService {
 
     private final FilmStorage filmStorage;
@@ -28,14 +30,6 @@ public class FilmService {
     private final DirectorService directorService;
     private final FeedStorage feedStorage;
     private static final String FILM_NOT_FOUND = "Фильм не найден № ";
-
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, LikesStorage likesStorage, DirectorService directorService, FeedStorage feedStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-        this.likesStorage = likesStorage;
-        this.directorService = directorService;
-        this.feedStorage = feedStorage;
-    }
 
     public Film addFilm(Film film) {
         return filmStorage.add(film);

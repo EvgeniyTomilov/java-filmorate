@@ -145,7 +145,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void removeFriend(Long id, Long idRemoveFriend) {
-          if (id == null || idRemoveFriend == null || id.equals(idRemoveFriend)) {
+        if (id == null || idRemoveFriend == null || id.equals(idRemoveFriend)) {
             return;
         }
         String sqlQueryRemoveFriend = "DELETE FROM userFriends f WHERE f.userId = ? AND f.friendsId = ?";

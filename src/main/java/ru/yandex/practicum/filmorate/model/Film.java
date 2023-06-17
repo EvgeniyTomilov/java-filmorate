@@ -16,7 +16,6 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-@Validated
 public class Film {
 
     private Long id;

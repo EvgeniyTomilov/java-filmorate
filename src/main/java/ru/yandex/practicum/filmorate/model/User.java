@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Data
 @Builder
 @AllArgsConstructor
-@Validated
 public class User {
     private Long id;
 

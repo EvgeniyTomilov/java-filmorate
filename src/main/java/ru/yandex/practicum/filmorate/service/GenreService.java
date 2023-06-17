@@ -17,7 +17,7 @@ public class GenreService {
     private final GenresStorage genresStorage;
 
     @Autowired
-    public GenreService(@Qualifier("GenresDbStorage") GenresStorage genresStorage) {
+    public GenreService(GenresStorage genresStorage) {
         this.genresStorage = genresStorage;
     }
 

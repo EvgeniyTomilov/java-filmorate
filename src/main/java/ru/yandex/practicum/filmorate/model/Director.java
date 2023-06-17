@@ -13,7 +13,6 @@ import javax.validation.constraints.PositiveOrZero;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Validated
 public class Director {
 
     @PositiveOrZero
