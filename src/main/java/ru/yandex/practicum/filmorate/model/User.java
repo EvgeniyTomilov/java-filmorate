@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.validation.customAnnotation.NoSpaces;
 
 import javax.validation.constraints.Email;
