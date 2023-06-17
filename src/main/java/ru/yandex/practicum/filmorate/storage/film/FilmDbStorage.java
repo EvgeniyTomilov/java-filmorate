@@ -342,6 +342,20 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(id);
         return film;
     }
+
+    @Override
+    public Collection<Integer> getUserRecommendations(int userId) {
+        final String sql = "SELECT f.id " +
+                "FROM FILMLIKES AS l1 " +
+                "INNER JOIN films AS f ON l1.filmid = f.id " +
+                "WHERE l1.userid = (" +
+                "SELECT l2.userid FROM FILMLIKES AS l2 WHERE l2.userid <> ? " +
+                "AND l2.filmid IN (" +
+                "SELECT l3.filmid FROM FILMLIKES AS l3 WHERE l3.userid = ?)" +
+                "GROUP BY l2.userid " +
+                "ORDER BY COUNT (l2.filmid) DESC " +
+                "LIMIT 1)" +
+                "AND l1.filmid NOT IN (SELECT l4.filmid FROM FILMLIKES AS l4 WHERE l4.userid = ?)";
+        return jdbcTemplate.queryForList(sql, Integer.class, userId, userId, userId);
+    }
 }
-
-

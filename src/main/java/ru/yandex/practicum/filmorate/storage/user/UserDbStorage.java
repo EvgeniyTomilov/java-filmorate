@@ -19,6 +19,8 @@ import java.sql.Date;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component("userDbStorage")
@@ -190,17 +192,15 @@ public class UserDbStorage implements UserStorage {
     @Override
     public Collection<Film> getRecommendations(Long id) {
         Collection<Film> result = new HashSet<>();
-        Collection<Film> films = filmDbStorage.getAll();
-        getAll().forEach(user -> {
-            if (user.getId() != id) {
-                films.forEach(film -> {
-                    Integer userLikes = likesDbStorage.getAmountOfLikes(film.getId(), id);
-                    Integer otherUserLikes = likesDbStorage.getAmountOfLikes(film.getId(), user.getId());
-                    if (userLikes == 0 && otherUserLikes > 0) {
-                        result.add(film);
-                    }
-                });
-            }
+        Collection<Integer> resultId = filmDbStorage.getUserRecommendations(id.intValue());
+        if (resultId.size() == 0) {
+            return result;
+        }
+        Map<Long, Film> mappedFilms = filmDbStorage.getAll().stream()
+                .collect(Collectors.toMap(Film::getId,
+                        Function.identity()));
+        resultId.forEach(id1 -> {
+            result.add(mappedFilms.get(id1.longValue()));
         });
         return result;
     }
@@ -216,6 +216,4 @@ public class UserDbStorage implements UserStorage {
         }
 
     }
-
-
 }
