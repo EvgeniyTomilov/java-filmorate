@@ -111,7 +111,9 @@ public class FilmDbStorage implements FilmStorage {
                 .mpa(MPA.builder().id(rs.getInt("RATINGMPAID"))
                         .name(rs.getString("RATINGNAME"))
                         .build())
-                .genres(getGenresOfFilm(filmId))
+                .genres(getGenresOfFilm(filmId)) //Так как жанров может быть много, то в задании было предложено сделать
+                // отдельную таблицу для жанров, и так как жанры фильма могут добавляться/удаляться, необходимо делать
+                // запрос к этой таблице каждый раз
                 .build();
         film.setId(filmId);
         return film;
