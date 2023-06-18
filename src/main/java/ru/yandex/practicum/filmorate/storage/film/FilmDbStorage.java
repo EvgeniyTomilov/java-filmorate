@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component("filmDbStorage")
@@ -117,6 +118,31 @@ public class FilmDbStorage implements FilmStorage {
                 .build();
         film.setId(filmId);
         return film;
+    }
+
+    public void setGenresListFilmsDB(List<Film> films) {
+        List<Long> listID = new ArrayList<>();
+        for (Film film : films) {
+            listID.add(film.getId());
+        }
+        String sep = ",";
+        String str = listID.stream().map(Object::toString)
+                .collect(Collectors.joining(sep));
+        String sqlQueryFilmGenre = "SELECT FILM_GENRE.FILM_ID, GENRE.ID, GENRE.NAME FROM FILM_GENRE, " +
+                "GENRE WHERE FILM_GENRE.GENRE_ID = GENRE.ID AND FILM_GENRE.FILM_ID IN (" + str + ") ORDER BY FILM_GENRE.FILM_ID";
+        Map<Long, Film> mapedFilms = films.stream()
+                .collect(Collectors.toMap(Film::getId, Function.identity()));
+
+        List<Map<String, Object>> genresList = jdbcTemplate.queryForList(sqlQueryFilmGenre);
+
+        for (Map<String, Object> t : genresList) {
+            Film film = mapedFilms.get((Long) t.get("film_id"));
+            Genre genre = Genre.builder()
+                    .id((Integer) t.get("id"))
+                    .name(t.get("name").toString())
+                    .build();
+            film.getGenres().add(genre);
+        }
     }
 
     @Override
