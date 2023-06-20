@@ -9,7 +9,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
-import java.util.Set;
 
 @Data
 @Builder
@@ -29,18 +28,4 @@ public class User {
 
     @PastOrPresent(message = "дата рождения не может быть в будущем")
     private LocalDate birthday;
-
-    private Set<Long> friends;
-
-    public void setFriends(Set<Long> friends) {
-        this.friends.addAll(friends);
-    }
-
-    public void addFriend(Long friendId) {
-        this.friends.add(friendId);
-    }
-
-    public void removeFriend(Long friendId) {
-        this.friends.remove(friendId);
-    }
 }

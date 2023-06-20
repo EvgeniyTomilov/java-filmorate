@@ -2,11 +2,11 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
@@ -14,10 +14,10 @@ import java.util.Collection;
 @Service
 @Slf4j
 public class UserService {
-
     @Autowired
-    @Qualifier(value = "userDbStorage")
     private UserStorage userStorage;
+    @Autowired
+    private FeedStorage feedStorage;
 
     public User createUser(User user) {
         return userStorage.add(user);
@@ -34,9 +34,9 @@ public class UserService {
     public void deleteUser(Long id) {
         if (contains(id)) {
             userStorage.delete(id);
+        } else {
+            log.info("User с id " + id + " не найден");
         }
-        log.info("User с id " + id + " не найден");
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public Collection<User> getAllUsers() {
@@ -55,6 +55,7 @@ public class UserService {
         if (contains(id)) {
             if (contains(friendId)) {
                 userStorage.addFriend(id, friendId);
+                feedStorage.addEvent(id, EventTypes.FRIEND, Operations.ADD, friendId);
             } else {
                 log.info("Пользователь " + friendId + " не найден");
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -68,11 +69,11 @@ public class UserService {
     public void deleteFriend(Long id, Long friendId) {
         if (contains(id)) {
             if (contains(friendId)) {
-                userStorage.removeFriend(id, friendId);
+                feedStorage.addEvent(id, EventTypes.FRIEND, Operations.REMOVE, friendId);
             } else {
                 log.info("Пользователь " + friendId + " не найден");
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
+            userStorage.removeFriend(id, friendId);
         } else {
             log.info("Пользователь " + id + " не найден");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -102,5 +103,14 @@ public class UserService {
 
     private boolean contains(Long id) {
         return userStorage.getUsersMap().containsKey(id);
+    }
+
+    public Collection<Film> getRecommendations(Long id) {
+        return userStorage.getRecommendations(id);
+    }
+
+    public Collection<Event> getFeedById(int userId) {
+        userStorage.isExist(userId);
+        return feedStorage.getFeedById(userId);
     }
 }

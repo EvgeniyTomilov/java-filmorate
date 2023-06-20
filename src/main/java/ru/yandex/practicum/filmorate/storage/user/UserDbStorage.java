@@ -6,14 +6,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.error.exception.NullException;
+import ru.yandex.practicum.filmorate.error.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.likes.LikesDbStorage;
 
 import java.sql.Date;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component("userDbStorage")
@@ -21,6 +28,8 @@ import java.util.*;
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final LikesDbStorage likesDbStorage;
+    private final FilmDbStorage filmDbStorage;
 
     private User rowMapToUser(ResultSet resultSet, int i) throws SQLException {
         LocalDate birthday;
@@ -178,5 +187,33 @@ public class UserDbStorage implements UserStorage {
                     sqlQueryCommonFriends, id, otherId);
         }
         return commonFriends;
+    }
+
+    @Override
+    public Collection<Film> getRecommendations(Long id) {
+        Collection<Film> result = new HashSet<>();
+        Collection<Integer> resultId = filmDbStorage.getUserRecommendations(id.intValue());
+        if (resultId.size() == 0) {
+            return result;
+        }
+        Map<Long, Film> mappedFilms = filmDbStorage.getAll().stream()
+                .collect(Collectors.toMap(Film::getId,
+                        Function.identity()));
+        resultId.forEach(id1 -> {
+            result.add(mappedFilms.get(id1.longValue()));
+        });
+        return result;
+    }
+
+
+    public void isExist(int userId) {
+        final String checkUserQuery = "SELECT * FROM users WHERE id = ?";
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(checkUserQuery, userId);
+
+        if (!userRows.next()) {
+            log.warn("Пользователь с идентификатором {} не найден.", userId);
+            throw new ObjectNotFoundException("Пользователь с идентификатором " + userId + " не найден.");
+        }
+
     }
 }

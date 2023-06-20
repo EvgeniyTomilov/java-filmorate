@@ -10,4 +10,6 @@ public interface RatingStorage {
     Optional<MPA> getRatingById(Integer mpaId);
 
     List<MPA> getRatingAll();
+
+    String getNameMpa(int mpaId);
 }
