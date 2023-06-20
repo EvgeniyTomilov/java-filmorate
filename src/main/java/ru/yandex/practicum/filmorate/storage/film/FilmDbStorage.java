@@ -29,7 +29,6 @@ public class FilmDbStorage implements FilmStorage {
             "JOIN MPARATINGS ON F.RATINGMPAID = MPARATINGS.RATINGMPAID";
     public static final String GET_BY_ID_QUERY = "SELECT * FROM FILMS F " +
             "JOIN MPARATINGS ON F.RATINGMPAID = MPARATINGS.RATINGMPAID WHERE ID = ?";
-    
     private final JdbcTemplate jdbcTemplate;
     private final GenresStorage genreStorage;
     private final DirectorService directorService;
@@ -231,13 +230,13 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public List<FilmGenre> getAllGenresOfFilm() {
-        String GET_ALL_GENRES = "SELECT * FROM GENRE G " +
+        String getAllGenres = "SELECT * FROM GENRE G " +
                 "JOIN GENRENAMES ON G.GENREID = GENRENAMES.GENREID";
         List<FilmGenre> genres = new ArrayList<>();
         try {
-            genres = jdbcTemplate.query(GET_ALL_GENRES, this::rowMapToFilmGenre);
+            genres = jdbcTemplate.query(getAllGenres, this::rowMapToFilmGenre);
         } catch (EmptyResultDataAccessException e) {
-            log.info("В базе нет информации по запросу {}", GET_ALL_GENRES);
+            log.info("В базе нет информации по запросу {}", getAllGenres);
         }
         return genres;
     }
